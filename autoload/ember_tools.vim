@@ -17,25 +17,25 @@ function! ember_tools#Includeexpr()
 
     if &filetype == 'coffee'
       if current_file == 'app/router.coffee'
-        if sj#SearchUnderCursor('@route [''"]\zs\k\+[''"]')
+        if ember_tools#search#UnderCursor('@route [''"]\zs\k\+[''"]')
           let route_name = expand('<cword>')
           return s:FindRouteFile(route_name)
         endif
       endif
 
-      if sj#SearchUnderCursor('^\s*\zs\k\+:\s*Ember\.inject\.service()')
+      if ember_tools#search#UnderCursor('^\s*\zs\k\+:\s*Ember\.inject\.service()')
         let property = expand('<cword>')
         return s:FindService(property)
       endif
 
-      if sj#SearchUnderCursor('@get([''"]\zs\k\+[''"]')
+      if ember_tools#search#UnderCursor('@get([''"]\zs\k\+[''"]')
         let property = expand('<cword>')
         return s:FindService(property)
       endif
     endif
 
     if &filetype == 'emblem'
-      if sj#SearchUnderCursor('^\s*=\{}\s*\zs\k\+')
+      if ember_tools#search#UnderCursor('^\s*=\{}\s*\zs\k\+')
         let component_name = expand('<cword>')
         return s:FindComponentFile(component_name)
       endif
@@ -75,13 +75,13 @@ function! s:FindRouteFile(route_name)
   " Find any parent routes
   let indent = indent('.')
 
-  call sj#PushCursor()
+  call ember_tools#cursors#Push()
   while search('^ \{'.(indent - &sw).'}'.route_pattern, 'bW')
     let route = expand('<cword>')
     call insert(route_path, route, 0)
     let indent = indent('.')
   endwhile
-  call sj#PopCursor()
+  call ember_tools#cursors#Pop()
 
   return 'app/routes/'.join(route_path, '/').'.coffee'
 endfunction
@@ -89,7 +89,7 @@ endfunction
 function! s:FindService(property)
   let property = a:property
   let service_name = split(property, '\.')[0]
-  let dasherized_service_name = lib#Dasherize(service_name)
+  let dasherized_service_name = ember_tools#util#Dasherize(service_name)
 
   if search('^\s*'.service_name.':\s*Ember\.inject\.service()', 'bWn') &&
         \ filereadable('app/services/'.dasherized_service_name.'.coffee')
