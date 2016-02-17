@@ -1,7 +1,6 @@
 ## Usage
 
-*Note: This is **very** work-in-progress right now, so if you use it, expect that it
-will break and/or not work for your use cases.*
+*Note: This is **very** work-in-progress right now, so if you use it, expect that it will break and/or not work for your use cases.*
 
 So far, the only thing that works is `gf` (and its derivatives, `<c-w>f`,
 etc), for particular patterns, and only in coffeescript and emblem:
