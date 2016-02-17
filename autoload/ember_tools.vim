@@ -13,7 +13,7 @@ function! ember_tools#Includeexpr()
   let saved_iskeyword  = &iskeyword
 
   try
-    set iskeyword+=.,-
+    set iskeyword+=.,-,/
 
     if &filetype == 'coffee'
       if current_file == 'app/router.coffee'

@@ -23,6 +23,7 @@ and a custom projections file: https://gist.github.com/AndrewRadev/3524ee46bca8a
   component (try to parse property bindings or keep it simple?)
 - Integrate projections automatically somehow?
 - Make it more generic, so that it works for plain js and hbs
+- Make the patterns more generic, so they capture stuff from many places in the line
 
 ## Contributing
 
