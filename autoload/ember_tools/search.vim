@@ -49,6 +49,13 @@ function! ember_tools#search#PosUnderCursor(pattern, ...)
   try
     call ember_tools#cursors#Push()
 
+    if pattern =~ '\\zs'
+      let anchored_pattern = pattern
+      let pattern = substitute(pattern, '\\zs', '', 'g')
+    else
+      let anchored_pattern = ''
+    endif
+
     " find the start of the pattern
     call search(pattern, 'bcW', lnum)
     let search_result = search(pattern, 'cW'.extra_flags, lnum)
@@ -78,6 +85,12 @@ function! ember_tools#search#PosUnderCursor(pattern, ...)
       return [0, 0]
     else
       " a match has been found
+
+      if anchored_pattern != ''
+        " position the cursor in its real location
+        let match_start = search(anchored_pattern, 'cW'.extra_flags, lnum)
+      endif
+
       return [match_start, match_end]
     endif
   finally

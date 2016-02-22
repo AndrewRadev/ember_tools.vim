@@ -7,31 +7,50 @@ function! ember_tools#Init()
 endfunction
 
 " TODO (2016-02-16) Improve search under cursor, make it work with \zs
+" TODO (2016-02-22) Use separate callback for every matcher, then either
+" return or continue trying
 function! ember_tools#Includeexpr()
   let current_file     = expand('%')
   let current_file_dir = expand('%:h')
   let saved_iskeyword  = &iskeyword
 
+  call ember_tools#cursors#Push()
+
   try
     set iskeyword+=.,-,/
 
     if &filetype == 'coffee'
+      " TODO (2016-02-22) No corresponding push, needs to be rewritten with
+      " callbacks
       if current_file == 'app/router.coffee'
         if ember_tools#search#UnderCursor('@route [''"]\zs\k\+[''"]')
           let route_name = expand('<cword>')
           return s:FindRouteFile(route_name)
         endif
       endif
+      call ember_tools#cursors#Pop()
 
+      call ember_tools#cursors#Push()
       if ember_tools#search#UnderCursor('^\s*\zs\k\+:\s*Ember\.inject\.service()')
         let property = expand('<cword>')
         return s:FindService(property)
       endif
+      call ember_tools#cursors#Pop()
 
-      if ember_tools#search#UnderCursor('@get([''"]\zs\k\+[''"]')
+      call ember_tools#cursors#Push()
+      if ember_tools#search#UnderCursor('@get[( ][''"]\zs\k\+[''"]')
         let property = expand('<cword>')
         return s:FindService(property)
       endif
+      call ember_tools#cursors#Pop()
+
+      call ember_tools#cursors#Push()
+      if ember_tools#search#UnderCursor('createRecord[( ][''"]\zs\k\+[''"]')
+        let model_name = expand('<cword>')
+        return s:FindModel(model_name)
+      endif
+      " TODO (2016-02-22) No corresponding pop, needs to be rewritten with
+      " callbacks
     endif
 
     if &filetype == 'emblem'
@@ -50,6 +69,7 @@ function! ember_tools#Includeexpr()
 
     return current_file
   finally
+    call ember_tools#cursors#Pop()
     let &iskeyword = saved_iskeyword
   endtry
 endfunction
@@ -94,6 +114,19 @@ function! s:FindService(property)
   if search('^\s*'.service_name.':\s*Ember\.inject\.service()', 'bWn') &&
         \ filereadable('app/services/'.dasherized_service_name.'.coffee')
     return 'app/services/'.dasherized_service_name.'.coffee'
+  else
+    return ''
+  endif
+endfunction
+
+function! s:FindModel(name)
+  let name = a:name
+  let dasherized_name = ember_tools#util#Dasherize(name)
+
+  echomsg string([name, dasherized_name])
+
+  if filereadable('app/models/'.dasherized_name.'.coffee')
+    return 'app/models/'.dasherized_name.'.coffee'
   else
     return ''
   endif

@@ -55,4 +55,26 @@ describe "gf mapping" do
       expect(current_file).to eq 'app/services/example-service.coffee'
     end
   end
+
+  describe "finding a model" do
+    before :each do
+      touch_file 'app/models/example-model.coffee'
+      edit_file 'app/routes/example-route.coffee', <<-EOF
+        `import Ember from 'ember';`
+
+        route = Ember.Route.extend
+
+        model: ->
+          @store.createRecord('example-model')
+
+        `export default route`
+      EOF
+    end
+
+    it "finds a model from its createRecord() line" do
+      vim.search 'createRecord'
+      vim.normal 'gf'
+      expect(current_file).to eq 'app/models/example-model.coffee'
+    end
+  end
 end
