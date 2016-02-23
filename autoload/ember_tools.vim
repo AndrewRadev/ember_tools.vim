@@ -92,6 +92,10 @@ function! s:FindRouteFile(route_name)
   let route_path = [route_name]
   let route_pattern = '@route [''"]\zs\k\+[''"]'
 
+  if getline('.') =~ '\<resetNamespace: true\>'
+    return 'app/routes/'.route_name.'.coffee'
+  endif
+
   " Find any parent routes
   let indent = indent('.')
 
@@ -100,6 +104,10 @@ function! s:FindRouteFile(route_name)
     let route = expand('<cword>')
     call insert(route_path, route, 0)
     let indent = indent('.')
+
+    if getline('.') =~ '\<resetNamespace: true\>'
+      break
+    endif
   endwhile
   call ember_tools#cursors#Pop()
 
