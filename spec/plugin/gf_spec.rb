@@ -15,7 +15,7 @@ describe "gf mapping" do
   end
 
   specify "finding a component" do
-    touch_file 'app/components/foo/bar-baz/component.coffee'
+    touch_file 'app/components/foo/bar-baz/template.emblem'
     edit_file 'app/templates/example.emblem', <<-EOF
       p
         = foo/bar-baz param1=something
@@ -24,7 +24,7 @@ describe "gf mapping" do
 
     vim.normal 'gf'
 
-    expect(current_file).to eq 'app/components/foo/bar-baz/component.coffee'
+    expect(current_file).to eq 'app/components/foo/bar-baz/template.emblem'
   end
 
   describe "finding a service" do
