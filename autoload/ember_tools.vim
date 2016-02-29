@@ -4,6 +4,8 @@ function! ember_tools#Init()
   endif
 
   setlocal includeexpr=ember_tools#Includeexpr()
+
+  command! -count=0 -nargs=1 -buffer Extract call ember_tools#extract#Run(<line1>, <line2>, <f-args>)
 endfunction
 
 function! ember_tools#Includeexpr()

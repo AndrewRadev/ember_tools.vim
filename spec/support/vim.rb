@@ -24,5 +24,10 @@ module Support
     def current_file
       vim.command('echo expand("%")')
     end
+
+    def expect_file_contents(filename, string)
+      string = normalize_string_indent(string)
+      expect(IO.read(filename).strip).to eq(string)
+    end
   end
 end
