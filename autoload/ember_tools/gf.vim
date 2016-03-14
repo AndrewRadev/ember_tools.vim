@@ -63,7 +63,7 @@ function! ember_tools#gf#Model()
     return ''
   endif
 
-  if !ember_tools#search#UnderCursor('createRecord[( ][''"]\zs\k\+[''"]')
+  if !ember_tools#search#UnderCursor('\%(createRecord\|modelFor\)[( ][''"]\zs\k\+[''"]')
     return ''
   endif
 

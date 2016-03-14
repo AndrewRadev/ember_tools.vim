@@ -66,6 +66,7 @@ describe "gf mapping" do
 
         model: ->
           @store.createRecord('example-model')
+          @modelFor('example-model')
 
         `export default route`
       EOF
@@ -73,6 +74,12 @@ describe "gf mapping" do
 
     it "finds a model from its createRecord() line" do
       vim.search 'createRecord'
+      vim.normal 'gf'
+      expect(current_file).to eq 'app/models/example-model.coffee'
+    end
+
+    it "finds a model from its modelFor() line" do
+      vim.search 'modelFor'
       vim.normal 'gf'
       expect(current_file).to eq 'app/models/example-model.coffee'
     end
