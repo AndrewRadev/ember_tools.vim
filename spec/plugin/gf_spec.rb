@@ -59,14 +59,18 @@ describe "gf mapping" do
   describe "finding a model" do
     before :each do
       touch_file 'app/models/example-model.coffee'
+      touch_file 'app/models/other-model.coffee'
       edit_file 'app/routes/example-route.coffee', <<-EOF
         `import Ember from 'ember';`
 
         route = Ember.Route.extend
+          model: ->
+            @store.createRecord('example-model')
+            @modelFor('example-model')
 
-        model: ->
-          @store.createRecord('example-model')
-          @modelFor('example-model')
+        model = Ember.Model.extend
+          otherModel: DS.belongsTo("otherModel", async: false)
+          otherModel: DS.hasMany("otherModel", async: true)
 
         `export default route`
       EOF
@@ -82,6 +86,18 @@ describe "gf mapping" do
       vim.search 'modelFor'
       vim.normal 'gf'
       expect(current_file).to eq 'app/models/example-model.coffee'
+    end
+
+    it "finds a model from its belongsTo() line" do
+      vim.search 'belongsTo'
+      vim.normal 'gf'
+      expect(current_file).to eq 'app/models/other-model.coffee'
+    end
+
+    it "finds a model from its hasMany() line" do
+      vim.search 'hasMany'
+      vim.normal 'gf'
+      expect(current_file).to eq 'app/models/other-model.coffee'
     end
   end
 end

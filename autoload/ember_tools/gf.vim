@@ -63,7 +63,14 @@ function! ember_tools#gf#Model()
     return ''
   endif
 
-  if !ember_tools#search#UnderCursor('\%(createRecord\|modelFor\)[( ][''"]\zs\k\+[''"]')
+  let model_methods = [
+        \ 'createRecord',
+        \ 'modelFor',
+        \ 'belongsTo',
+        \ 'hasMany'
+        \ ]
+
+  if !ember_tools#search#UnderCursor('\%('.join(model_methods, '\|').'\)[( ][''"]\zs\k\+[''"]')
     return ''
   endif
 
