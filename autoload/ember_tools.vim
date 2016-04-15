@@ -16,6 +16,7 @@ function! ember_tools#Includeexpr()
         \ 'ember_tools#gf#Model',
         \ 'ember_tools#gf#TemplateComponent',
         \ 'ember_tools#gf#Import',
+        \ 'ember_tools#gf#Action',
         \ ]
 
   let saved_iskeyword  = &iskeyword
@@ -36,4 +37,27 @@ function! ember_tools#Includeexpr()
   endfor
 
   return expand('<cfile>')
+endfunction
+
+function! ember_tools#SetFileOpenCallback(filename, ...)
+  let searches = a:000
+
+  augroup ember_tools_file_open_callback
+    autocmd!
+
+    echomsg 'autocmd BufEnter '.a:filename.' normal! gg'
+    exe 'autocmd BufEnter '.a:filename.' normal! gg'
+    for pattern in searches
+      echomsg 'autocmd BufEnter '.a:filename.' call search("'.escape(pattern, '"\').'")'
+      exe 'autocmd BufEnter '.a:filename.' call search("'.escape(pattern, '"\').'")'
+    endfor
+    echomsg 'autocmd BufEnter '.a:filename.' call ember_tools#ClearFileOpenCallback()'
+    exe 'autocmd BufEnter '.a:filename.' call ember_tools#ClearFileOpenCallback()'
+  augroup END
+endfunction
+
+function! ember_tools#ClearFileOpenCallback()
+  augroup ember_tools_file_open_callback
+    autocmd!
+  augroup END
 endfunction

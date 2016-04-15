@@ -27,19 +27,53 @@ describe "gf mapping" do
     expect(current_file).to eq 'app/components/foo/bar-baz/template.emblem'
   end
 
+  specify "finding a controller action" do
+    edit_file 'app/controllers/foo.coffee', <<-EOF
+      controller = Ember.Controller.extend
+        actions:
+          exampleAction: ->
+            # example
+    EOF
+    edit_file 'app/templates/foo.emblem', <<-EOF
+      p
+        = foo/bar-baz param1=(action 'exampleAction')
+    EOF
+    vim.search 'exampleAction'
+
+    vim.normal 'gf'
+
+    expect(current_file).to eq 'app/controllers/foo.coffee'
+    expect(current_line.strip).to eq 'exampleAction: ->'
+  end
+
+  specify "finding a component action" do
+    edit_file 'app/components/foo/component.coffee', <<-EOF
+      component = Ember.Component.extend
+        actions:
+          exampleAction: ->
+            # example
+    EOF
+    edit_file 'app/components/foo/template.emblem', <<-EOF
+      p
+        = foo/bar-baz param1=(action 'exampleAction')
+    EOF
+    vim.search 'exampleAction'
+
+    vim.normal 'gf'
+
+    expect(current_file).to eq 'app/components/foo/component.coffee'
+    expect(current_line.strip).to eq 'exampleAction: ->'
+  end
+
   describe "finding a service" do
     before :each do
       touch_file 'app/services/example-service.coffee'
       edit_file 'app/routes/example-route.coffee', <<-EOF
-        `import Ember from 'ember';`
-
         route = Ember.Route.extend
           exampleService: Ember.inject.service()
 
         beforeModel: ->
           @get('exampleService.exampleProperty').doSomething()
-
-        `export default route`
       EOF
     end
 
@@ -61,8 +95,6 @@ describe "gf mapping" do
       touch_file 'app/models/example-model.coffee'
       touch_file 'app/models/other-model.coffee'
       edit_file 'app/routes/example-route.coffee', <<-EOF
-        `import Ember from 'ember';`
-
         route = Ember.Route.extend
           model: ->
             @store.createRecord('example-model')
@@ -71,8 +103,6 @@ describe "gf mapping" do
         model = Ember.Model.extend
           otherModel: DS.belongsTo("otherModel", async: false)
           otherModel: DS.hasMany("otherModel", async: true)
-
-        `export default route`
       EOF
     end
 
