@@ -9,7 +9,9 @@ function! ember_tools#Init()
 endfunction
 
 function! ember_tools#Includeexpr()
-  let callbacks = [
+  let callbacks = []
+  call extend(callbacks, g:ember_tools_custom_gf_callbacks)
+  call extend(callbacks, [
         \ 'ember_tools#gf#RouterRoute',
         \ 'ember_tools#gf#ServiceInjection',
         \ 'ember_tools#gf#ServiceProperty',
@@ -17,7 +19,7 @@ function! ember_tools#Includeexpr()
         \ 'ember_tools#gf#TemplateComponent',
         \ 'ember_tools#gf#Import',
         \ 'ember_tools#gf#Action',
-        \ ]
+        \ ])
 
   let saved_iskeyword  = &iskeyword
 
