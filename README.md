@@ -12,6 +12,7 @@ patterns, and only in coffeescript and emblem:
 - Also, on the `serviceName: Ember.service.inject()` line, `gf` on serviceName
   will work
 - `gf` on a file-relative import, say `../../mixins/foobar`, works correctly
+- `gf` on `createRecord`, `belongsTo`, and a few other things send you to the model
 
 The other big thing you can do is use the `:Extract <component-name>` command to extract an emblem partial into its own component.
 
@@ -20,12 +21,10 @@ and a custom projections file: https://gist.github.com/AndrewRadev/3524ee46bca8a
 
 ## TODO/Ideas
 
-- `gf` on `createRecord`, `findRecord`, etc. can easily open models
-- `:Extract component-name` that takes a visual selection and puts it in a
-  component (try to parse property bindings or keep it simple?)
 - Integrate projections automatically somehow?
 - Make it more generic, so that it works for plain js and hbs
 - Make the patterns more generic, so they capture stuff from many places in the line
+- Get it to play nicely with rails.vim
 
 ## Contributing
 
