@@ -12,11 +12,12 @@ Vimrunner::RSpec.configure do |config|
     vim = Vimrunner.start_gvim
     vim.add_plugin(plugin_path, 'plugin/ember_tools.vim')
 
-    # bootstrap coffee and emblem
+    # bootstrap filetypes
     vim.command 'autocmd BufNewFile,BufRead *.coffee set filetype=coffee'
     vim.command 'autocmd BufNewFile,BufRead *.emblem set filetype=emblem'
+    vim.command 'autocmd BufNewFile,BufRead *.hbs set filetype=handlebars'
 
-    vim.command 'autocmd FileType coffee,emblem set expandtab tabstop=2 shiftwidth=2'
+    vim.command 'autocmd FileType coffee,emblem,handlebars set expandtab tabstop=2 shiftwidth=2'
 
     vim
   end

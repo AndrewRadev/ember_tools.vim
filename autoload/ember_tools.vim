@@ -63,3 +63,29 @@ function! ember_tools#ClearFileOpenCallback()
     autocmd!
   augroup END
 endfunction
+
+function! ember_tools#TemplateFiletype()
+  if &filetype == 'handlebars' || &filetype == 'emblem'
+    return &filetype
+  endif
+
+  return g:ember_tools_default_template_filetype
+endfunction
+
+function! ember_tools#LogicFiletype()
+  if &filetype == 'javascript' || &filetype == 'coffee'
+    return &filetype
+  endif
+
+  return g:ember_tools_default_logic_filetype
+endfunction
+
+function! ember_tools#TemplateExtension()
+  if ember_tools#TemplateFiletype() == 'handlebars'
+    return 'hbs'
+  endif
+
+  if ember_tools#TemplateFiletype() == 'emblem'
+    return 'emblem'
+  endif
+endfunction

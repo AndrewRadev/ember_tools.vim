@@ -4,8 +4,10 @@ function! ember_tools#extract#Run(start_line, end_line, component_name)
   let component_name = split(a:component_name, ' ')[0]
   let base_indent    = indent(start_line)
 
-  if filereadable('app/components/'.component_name.'/template.emblem')
-    echoerr 'File "app/components/'.component_name.'/template.emblem" already exists'
+  let template_file = 'app/components/'.component_name.'/template.'.ember_tools#TemplateExtension()
+
+  if filereadable(template_file)
+    echoerr 'File "'.template_file.'" already exists'
     return
   endif
 
@@ -16,20 +18,39 @@ function! ember_tools#extract#Run(start_line, end_line, component_name)
   endfor
 
   exe start_line.','.end_line.'delete _'
-  call append(start_line - 1, repeat(' ', base_indent).'= '.component_name)
+  if ember_tools#TemplateFiletype() == 'emblem'
+    call append(start_line - 1, repeat(' ', base_indent).'= '.component_name)
+  else " handlebars
+    call append(start_line - 1, repeat(' ', base_indent).'{{'.component_name.'}}')
+  endif
+
   write
 
-  let component_lines = [
-        \ "`import Ember from 'ember';`",
-        \ "",
-        \ "component = Ember.Component.extend()",
-        \ "",
-        \ "`export default component;`",
-        \ ]
+  if ember_tools#LogicFiletype() == 'coffee'
+    let component_lines = [
+          \ "`import Ember from 'ember';`",
+          \ "",
+          \ "component = Ember.Component.extend()",
+          \ "",
+          \ "`export default component;`",
+          \ ]
 
-  call mkdir('app/components/'.component_name, 'p')
-  call writefile(component_lines, 'app/components/'.component_name.'/component.coffee')
-  call writefile(partial_lines, 'app/components/'.component_name.'/template.emblem')
+    call mkdir('app/components/'.component_name, 'p')
+    call writefile(component_lines, 'app/components/'.component_name.'/component.coffee')
+  else " javascript
+    let component_lines = [
+          \ "`import Ember from 'ember';`",
+          \ "",
+          \ "export default Ember.Component.extend({",
+          \ "",
+          \ "});",
+          \ ]
 
-  exe 'split app/components/'.component_name.'/template.emblem'
+    call mkdir('app/components/'.component_name, 'p')
+    call writefile(component_lines, 'app/components/'.component_name.'/component.js')
+  endif
+
+  call writefile(partial_lines, template_file)
+
+  exe 'split '.template_file
 endfunction
