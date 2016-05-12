@@ -71,12 +71,11 @@ function! ember_tools#search#PosUnderCursor(pattern, ...)
 
     " set the end of the pattern to the next character, or EOL. Extra logic
     " is for multibyte characters.
-    normal! l
-    if col('.') == match_end
+    if col('.') + 1 > match_end
       " no movement, we must be at the end
       let match_end = col('$')
     else
-      let match_end = col('.')
+      let match_end = col('.') + 1
     endif
     call ember_tools#cursors#Pop()
 
