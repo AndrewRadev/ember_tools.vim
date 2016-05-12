@@ -90,14 +90,16 @@ function! ember_tools#gf#TemplateComponent()
   endif
 
   let component_name = expand('<cword>')
-  let component_template = s:FindComponentTemplate(component_name)
-
-  if component_template == ''
+  let component_file = s:FindComponentTemplate(component_name)
+  if component_file == ''
+    let component_file = s:FindComponentLogic(component_name)
+  endif
+  if component_file == ''
     echomsg "Can't find component: ".component_name
     return ''
   endif
 
-  return component_template
+  return component_file
 endfunction
 
 function! ember_tools#gf#Import()
@@ -171,10 +173,6 @@ function! s:FindComponentLogic(component_name)
   return ''
 endfunction
 
-function! s:FindController(component_name)
-  return ember_tools#ExistingLogicFile('app/controllers/'.a:component_name)
-endfunction
-
 function! s:FindComponentTemplate(component_name)
   let existing_file = ember_tools#ExistingTemplateFile('app/templates/components/'.a:component_name)
   if existing_file != '' | return existing_file | endif
@@ -183,6 +181,10 @@ function! s:FindComponentTemplate(component_name)
   if existing_file != '' | return existing_file | endif
 
   return ''
+endfunction
+
+function! s:FindController(component_name)
+  return ember_tools#ExistingLogicFile('app/controllers/'.a:component_name)
 endfunction
 
 function! s:IsComponentTemplate(filename)

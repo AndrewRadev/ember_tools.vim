@@ -30,6 +30,20 @@ describe "gf mapping" do
       expect(current_file).to eq 'app/components/foo/bar-baz/template.hbs'
     end
 
+    specify "finding a component without a template file" do
+      touch_file 'app/components/foo/bar-baz/component.js'
+      edit_file 'app/templates/example.hbs', <<-EOF
+        <p>
+          {{foo/bar-baz param1=something}}
+        </p>
+      EOF
+      vim.search 'foo/bar-baz'
+
+      vim.normal 'gf'
+
+      expect(current_file).to eq 'app/components/foo/bar-baz/component.js'
+    end
+
     specify "finding a controller action" do
       edit_file 'app/controllers/foo.js', <<-EOF
         export default Ember.Controller.extend({
