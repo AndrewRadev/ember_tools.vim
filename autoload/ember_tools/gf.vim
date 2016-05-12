@@ -1,9 +1,9 @@
 function! ember_tools#gf#RouterRoute()
-  if expand('%') != 'app/router.coffee'
+  if expand('%:r') != 'app/router'
     return ''
   endif
 
-  let route_pattern = '@route [''"]\zs\k\+[''"]'
+  let route_pattern = '\%(this\.\|@\)route\s*(\=\s*[''"]\zs\k\+[''"]'
 
   if !ember_tools#search#UnderCursor(route_pattern)
     return ''
@@ -13,7 +13,7 @@ function! ember_tools#gf#RouterRoute()
   let route_path = [route_name]
 
   if getline('.') =~ '\<resetNamespace: true\>'
-    return 'app/routes/'.route_name.'.coffee'
+    return 'app/routes/'.route_name.'.'.ember_tools#LogicExtension()
   endif
 
   " Find any parent routes
@@ -29,11 +29,11 @@ function! ember_tools#gf#RouterRoute()
     endif
   endwhile
 
-  return 'app/routes/'.join(route_path, '/').'.coffee'
+  return 'app/routes/'.join(route_path, '/').'.'.ember_tools#LogicExtension()
 endfunction
 
 function! ember_tools#gf#ServiceInjection()
-  if &filetype != 'coffee'
+  if !ember_tools#IsLogicFiletype()
     return ''
   endif
 
@@ -46,11 +46,11 @@ function! ember_tools#gf#ServiceInjection()
 endfunction
 
 function! ember_tools#gf#ServiceProperty()
-  if &filetype != 'coffee'
+  if !ember_tools#IsLogicFiletype()
     return ''
   endif
 
-  if !ember_tools#search#UnderCursor('@get[( ][''"]\zs\k\+[''"]')
+  if !ember_tools#search#UnderCursor('get[( ][''"]\zs\k\+[''"]')
     return ''
   endif
 
@@ -59,7 +59,7 @@ function! ember_tools#gf#ServiceProperty()
 endfunction
 
 function! ember_tools#gf#Model()
-  if &filetype != 'coffee'
+  if !ember_tools#IsLogicFiletype()
     return ''
   endif
 
@@ -77,19 +77,15 @@ function! ember_tools#gf#Model()
   let model_name = expand('<cword>')
   let dasherized_name = ember_tools#util#Dasherize(model_name)
 
-  if filereadable('app/models/'.dasherized_name.'.coffee')
-    return 'app/models/'.dasherized_name.'.coffee'
-  else
-    return ''
-  endif
+  return ember_tools#ExistingLogicFile('app/models/'.dasherized_name)
 endfunction
 
 function! ember_tools#gf#TemplateComponent()
-  if &filetype != 'emblem'
+  if !ember_tools#IsTemplateFiletype()
     return ''
   endif
 
-  if !ember_tools#search#UnderCursor('^\s*=\{}\s*\zs\k\+')
+  if !ember_tools#search#UnderCursor('^\s*\%(=\|{{\)\{}\s*\zs\k\+')
     return ''
   endif
 
@@ -105,7 +101,7 @@ function! ember_tools#gf#TemplateComponent()
 endfunction
 
 function! ember_tools#gf#Import()
-  if &filetype != 'coffee'
+  if !ember_tools#IsTemplateFiletype()
     return ''
   endif
 
@@ -123,18 +119,16 @@ function! ember_tools#gf#Import()
 endfunction
 
 function! ember_tools#gf#Action()
-  if &filetype != 'emblem'
+  if !ember_tools#IsTemplateFiletype()
     return ''
   endif
 
-  if !ember_tools#search#UnderCursor('action\s*[''"]\zs\k\+[''"]')
+  if !ember_tools#search#UnderCursor('\<action\s*[''"]\zs\k\+[''"]')
     return ''
   endif
 
   let current_file = expand('%:.')
   let action_name = expand('<cword>')
-
-  echomsg current_file
 
   if s:IsComponentTemplate(current_file)
     let component_name = s:ExtractComponentName(current_file)
@@ -150,7 +144,7 @@ function! ember_tools#gf#Action()
     echomsg "Can't find action: ".action_name
     return ''
   else
-    call ember_tools#SetFileOpenCallback(result, 'actions:', '^\s*\zs'.action_name.':')
+    call ember_tools#SetFileOpenCallback(result, 'actions:', '^\s*\zs'.action_name.'\%(:\|(\)')
     return result
   endif
 endfunction
@@ -160,71 +154,67 @@ function! s:FindService(property)
   let service_name = split(property, '\.')[0]
   let dasherized_service_name = ember_tools#util#Dasherize(service_name)
 
-  if search('^\s*'.service_name.':\s*Ember\.inject\.service()', 'bWn') &&
-        \ filereadable('app/services/'.dasherized_service_name.'.coffee')
-    return 'app/services/'.dasherized_service_name.'.coffee'
+  if search('^\s*'.service_name.':\s*Ember\.inject\.service()', 'bWn')
+    return ember_tools#ExistingLogicFile('app/services/'.dasherized_service_name)
   else
     return ''
   endif
 endfunction
 
 function! s:FindComponentLogic(component_name)
-  if filereadable('app/components/'.a:component_name.'.coffee')
-    return 'app/components/'.a:component_name.'.coffee'
-  elseif filereadable('app/components/'.a:component_name.'/component.coffee')
-    return 'app/components/'.a:component_name.'/component.coffee'
-  else
-    return ''
-  endif
+  let existing_file = ember_tools#ExistingLogicFile('app/components/'.a:component_name)
+  if existing_file != '' | return existing_file | endif
+
+  let existing_file = ember_tools#ExistingLogicFile('app/components/'.a:component_name.'/component')
+  if existing_file != '' | return existing_file | endif
+
+  return ''
 endfunction
 
 function! s:FindController(component_name)
-  if filereadable('app/controllers/'.a:component_name.'.coffee')
-    return 'app/controllers/'.a:component_name.'.coffee'
-  else
-    return ''
-  endif
+  return ember_tools#ExistingLogicFile('app/controllers/'.a:component_name)
 endfunction
 
 function! s:FindComponentTemplate(component_name)
-  if filereadable('app/templates/components/'.a:component_name.'.emblem')
-    return 'app/templates/components/'.a:component_name.'.emblem'
-  elseif filereadable('app/components/'.a:component_name.'/template.emblem')
-    return 'app/components/'.a:component_name.'/template.emblem'
-  else
-    return ''
-  endif
+  let existing_file = ember_tools#ExistingTemplateFile('app/templates/components/'.a:component_name)
+  if existing_file != '' | return existing_file | endif
+
+  let existing_file = ember_tools#ExistingTemplateFile('app/components/'.a:component_name.'/template')
+  if existing_file != '' | return existing_file | endif
+
+  return ''
 endfunction
 
 function! s:IsComponentTemplate(filename)
   return
-        \ a:filename =~ 'app/templates/components/\k\+\.emblem' ||
-        \ a:filename =~ 'app/components/\k\+\/template.emblem'
+        \ a:filename =~ 'app/templates/components/\k\+\.\(emblem\|hbs\)' ||
+        \ a:filename =~ 'app/components/\k\+\/template.\(emblem\|hbs\)'
 endfunction
 
 function! s:IsTemplate(filename)
-  return a:filename =~ 'app/templates/\k\+\.emblem'
+  return a:filename =~ 'app/templates/\k\+\.\(emblem\|hbs\)'
 endfunction
 
 function! s:ExtractComponentName(filename)
-  let name = matchstr(a:filename, 'app/templates/components/\zs\k\+\ze\.emblem')
+  let name = matchstr(a:filename, 'app/templates/components/\zs\k\+\ze\.\%(emblem\|hbs\)')
   if name == ''
-    let name = matchstr(a:filename, 'app/components/\zs\k\+\ze/template\.emblem')
+    let name = matchstr(a:filename, 'app/components/\zs\k\+\ze/template\.\%(emblem\|hbs\)')
+  endif
+
+  if name == ''
+    let name = matchstr(a:filename, 'app/components/\zs\k\+\ze\.\%(coffee\|js\)')
   endif
   if name == ''
-    let name = matchstr(a:filename, 'app/components/\zs\k\+\ze\.coffee')
-  endif
-  if name == ''
-    let name = matchstr(a:filename, 'app/components/\zs\k\+\ze/component\.coffee')
+    let name = matchstr(a:filename, 'app/components/\zs\k\+\ze/component\.\%(coffee\|js\)')
   endif
 
   return name
 endfunction
 
 function! s:ExtractControllerName(filename)
-  let name = matchstr(a:filename, 'app/templates/\zs\k\+\ze\.emblem')
+  let name = matchstr(a:filename, 'app/templates/\zs\k\+\ze\.\%(emblem\|hbs\)')
   if name == ''
-    let name = matchstr(a:filename, 'app/\(controllers\|routes\)/\zs\k\+\ze\.coffee')
+    let name = matchstr(a:filename, 'app/\%(controllers\|routes\)/\zs\k\+\ze\.\%(coffee\|js\)')
   endif
 
   return name

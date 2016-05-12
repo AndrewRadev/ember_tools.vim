@@ -13,12 +13,12 @@ function! ember_tools#Includeexpr()
   call extend(callbacks, g:ember_tools_custom_gf_callbacks)
   call extend(callbacks, [
         \ 'ember_tools#gf#RouterRoute',
+        \ 'ember_tools#gf#Action',
         \ 'ember_tools#gf#ServiceInjection',
         \ 'ember_tools#gf#ServiceProperty',
         \ 'ember_tools#gf#Model',
         \ 'ember_tools#gf#TemplateComponent',
         \ 'ember_tools#gf#Import',
-        \ 'ember_tools#gf#Action',
         \ ])
 
   let saved_iskeyword  = &iskeyword
@@ -65,7 +65,7 @@ function! ember_tools#ClearFileOpenCallback()
 endfunction
 
 function! ember_tools#TemplateFiletype()
-  if &filetype == 'handlebars' || &filetype == 'emblem'
+  if &filetype =~ 'handlebars' || &filetype == 'emblem'
     return &filetype
   endif
 
@@ -80,6 +80,16 @@ function! ember_tools#LogicFiletype()
   return g:ember_tools_default_logic_filetype
 endfunction
 
+function! ember_tools#IsLogicFiletype()
+  return index(['coffee', 'javascript'], &filetype) >= 0
+endfunction
+
+function! ember_tools#IsTemplateFiletype()
+  if &filetype == 'emblem'     | return 1 | endif
+  if &filetype =~ 'handlebars' | return 1 | endif
+  return 0
+endfunction
+
 function! ember_tools#TemplateExtension()
   if ember_tools#TemplateFiletype() == 'handlebars'
     return 'hbs'
@@ -88,4 +98,26 @@ function! ember_tools#TemplateExtension()
   if ember_tools#TemplateFiletype() == 'emblem'
     return 'emblem'
   endif
+endfunction
+
+function! ember_tools#LogicExtension()
+  if ember_tools#LogicFiletype() == 'javascript'
+    return 'js'
+  endif
+
+  return ember_tools#LogicFiletype()
+endfunction
+
+function! ember_tools#ExistingTemplateFile(file_prefix)
+  let file_prefix = a:file_prefix
+  if filereadable(file_prefix.'.emblem') | return file_prefix.'.emblem' | endif
+  if filereadable(file_prefix.'.hbs')    | return file_prefix.'.hbs'    | endif
+  return ''
+endfunction
+
+function! ember_tools#ExistingLogicFile(file_prefix)
+  let file_prefix = a:file_prefix
+  if filereadable(file_prefix.'.coffee') | return file_prefix.'.coffee' | endif
+  if filereadable(file_prefix.'.js')     | return file_prefix.'.js'     | endif
+  return ''
 endfunction

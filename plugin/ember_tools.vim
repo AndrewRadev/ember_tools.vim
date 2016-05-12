@@ -15,7 +15,7 @@ if !exists('g:ember_tools_default_logic_filetype')
 endif
 
 if !exists('g:ember_tools_default_template_filetype')
-  let g:ember_tools_default_logic_filetype = 'handlebars'
+  let g:ember_tools_default_template_filetype = 'handlebars'
 endif
 
 augroup ember_tools
