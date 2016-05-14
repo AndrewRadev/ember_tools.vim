@@ -91,7 +91,7 @@ function! ember_tools#IsTemplateFiletype()
 endfunction
 
 function! ember_tools#TemplateExtension()
-  if ember_tools#TemplateFiletype() == 'handlebars'
+  if ember_tools#TemplateFiletype() =~ 'handlebars'
     return 'hbs'
   endif
 

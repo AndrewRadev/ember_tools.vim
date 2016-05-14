@@ -15,7 +15,7 @@ Vimrunner::RSpec.configure do |config|
     # bootstrap filetypes
     vim.command 'autocmd BufNewFile,BufRead *.coffee set filetype=coffee'
     vim.command 'autocmd BufNewFile,BufRead *.emblem set filetype=emblem'
-    vim.command 'autocmd BufNewFile,BufRead *.hbs set filetype=handlebars'
+    vim.command 'autocmd BufNewFile,BufRead *.hbs set filetype=html.handlebars'
 
     vim.command 'autocmd FileType * set expandtab tabstop=2 shiftwidth=2'
 

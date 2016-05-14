@@ -21,7 +21,8 @@ endif
 augroup ember_tools
   autocmd!
 
-  autocmd FileType javascript,coffee,handlebars,emblem call ember_tools#Init()
+  autocmd FileType javascript,coffee,handlebars,html.handlebars,emblem
+        \ call ember_tools#Init()
 augroup END
 
 let &cpo = s:keepcpo
