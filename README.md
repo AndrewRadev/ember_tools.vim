@@ -9,7 +9,7 @@ patterns:
 - In templates, `gf` on a component opens up the main component file
 - `gf` on any `get('serviceName.something')` will open the service
   `service-name` (if it's been injected).
-- Also, on the `serviceName: Ember.service.inject()` line, `gf` on serviceName
+- Also, on the `serviceName: Ember.inject.service()` line, `gf` on serviceName
   will work
 - `gf` on a file-relative import, say `../../mixins/foobar`, works correctly
 - `gf` on `createRecord`, `belongsTo`, and a few other things send you to the model
@@ -23,7 +23,7 @@ and a custom projections file: https://gist.github.com/AndrewRadev/3524ee46bca8a
 
 - Integrate projections automatically somehow?
 - Make the patterns more generic, so they capture stuff from many places in the line
-- Get it to play nicely with rails.vim
+- Get it to play nicely with rails.vim (remap `<Plug><cfile>`)
 
 ## Contributing
 
