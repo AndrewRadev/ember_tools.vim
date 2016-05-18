@@ -103,7 +103,7 @@ function! ember_tools#gf#TemplateComponent()
 endfunction
 
 function! ember_tools#gf#Import()
-  if !ember_tools#IsTemplateFiletype()
+  if !ember_tools#IsLogicFiletype()
     return ''
   endif
 
@@ -114,7 +114,11 @@ function! ember_tools#gf#Import()
     exe 'cd '.current_file_dir
     let absolute_path = expand('<cfile>:p')
     cd -
-    return fnamemodify(absolute_path.'.coffee', ':.')
+    let files = glob(fnamemodify(absolute_path.'.*', ':.'), 0, 1)
+
+    if len(files) > 0
+      return files[0]
+    endif
   endif
 
   return ''

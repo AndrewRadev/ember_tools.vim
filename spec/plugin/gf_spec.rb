@@ -2,6 +2,18 @@ require 'spec_helper'
 
 describe "gf mapping" do
   describe "javascript/handlebars" do
+    specify "finding an import" do
+      touch_file 'app/stuff.js'
+      edit_file 'app/foo/bar/baz.js', <<-EOF
+        import stuff from '../../stuff';
+      EOF
+      vim.search 'stuff\''
+
+      vim.normal 'gf'
+
+      expect(current_file).to eq 'app/stuff.js'
+    end
+
     specify "finding a route" do
       touch_file 'app/routes/foo/bar-baz.js'
       edit_file 'app/router.js', <<-EOF
@@ -163,6 +175,18 @@ describe "gf mapping" do
   end
 
   describe "coffee/emblem" do
+    specify "finding an import" do
+      touch_file 'app/stuff.coffee'
+      edit_file 'app/foo/bar/baz.coffee', <<-EOF
+        `import stuff from '../../stuff';`
+      EOF
+      vim.search 'stuff\''
+
+      vim.normal 'gf'
+
+      expect(current_file).to eq 'app/stuff.coffee'
+    end
+
     specify "finding a route" do
       touch_file 'app/routes/foo/bar-baz.coffee'
       edit_file 'app/router.coffee', <<-EOF
