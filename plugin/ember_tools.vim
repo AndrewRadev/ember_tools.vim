@@ -23,6 +23,9 @@ augroup ember_tools
 
   autocmd FileType javascript,coffee,handlebars,html.handlebars,emblem
         \ call ember_tools#Init()
+
+  " Override gf if rails sets it after us
+  autocmd User Rails cmap <buffer><expr> <Plug><cfile> ember_tools#Includeexpr()
 augroup END
 
 let &cpo = s:keepcpo
