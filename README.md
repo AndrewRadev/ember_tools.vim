@@ -52,7 +52,7 @@ Pressing `gf` while on "showTooltip" will jump to the current template's control
 
 #### gf: Services
 
-If you have a service defined in, the file "app/services/cookie-settings.js", then you can jump to that file while hitting `gf` on the point of injection of the service:
+If you have a service defined in the file "app/services/cookie-settings.js", then you can jump to that file while hitting `gf` on the point of injection of the service:
 
 ``` javascript
 import Ember from 'ember';
