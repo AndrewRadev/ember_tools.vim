@@ -1,17 +1,16 @@
 ## Usage
 
-This plugin is a place for various tools to work with ember.js projects. After installing it, just editing files in an ember.js project should be enough to activate them. It's similar to (and inspired by) [rails.vim](https://github.com/tpope/vim-rails).
+This plugin contains various tools to work with ember.js projects. After installing it, just editing files in an ember.js project should be enough to activate them. It's similar to (and inspired by) [rails.vim](https://github.com/tpope/vim-rails).
 
-The tools work both for javascript and coffeescript, and they also support both handlebars and the emblem templating language.
+The tools work both for javascript and coffeescript, and they support both the handlebars and emblem templating languages.
 
-It's recommended to also use the [vim-projectionist](https://github.com/tpope/vim-projectionist) plugin for easier navigation through the project. Here's a sample json file you might use with it: https://gist.github.com/AndrewRadev/3524ee46bca8ab349329. It sets up the major file types you might want to navigate to, and it connects routes, controllers, and templates, so that the `:A` command jumps from route to controller, to template, and then back to a route.
+It's recommended to also use the [vim-projectionist](https://github.com/tpope/vim-projectionist) plugin for easier navigation through the project. Here's a sample json file you might use with it: https://gist.github.com/AndrewRadev/3524ee46bca8ab349329. It sets up the major file types you might want to navigate to, and it connects routes, controllers, and templates, so that the `:A` command jumps from route to controller, to template, and then back to the route.
 
 A list of the different tools that the plugin provides follows.
 
 ### gf
 
-This plugin sets a special `includeexpr` that does a good job of locating files based on contextual information. This includes not only `gf`, but the entire family of mappings that depends on `includeexpr`, like `CTRL-W_f`. From now on,
-for clarity, only "gf" will be used.
+This plugin sets a special `includeexpr` that does a good job of locating files based on contextual information. This includes not only `gf`, but the entire family of mappings that depends on `includeexpr`, like `<c-w>f`. From now on, for clarity, only "gf" will be used.
 
 #### gf: Routes
 
@@ -53,7 +52,7 @@ Pressing `gf` while on "showTooltip" will jump to the current template's control
 
 #### gf: Services
 
-If you have a service defined in, for example, the file "app/services/cookie-settings.js", then you can jump to that file while hitting `gf` on the point of injection of the service:
+If you have a service defined in, the file "app/services/cookie-settings.js", then you can jump to that file while hitting `gf` on the point of injection of the service:
 
 ``` javascript
 import Ember from 'ember';
@@ -64,7 +63,7 @@ export default Ember.Service.extend({
 });
 ```
 
-A `gf` on "cookieSettings" will jump to the right file, if it exists. If you actually use the service with `this.get`, you can also `gf` there as well:
+A `gf` on "cookieSettings" will jump to the right file, if it exists. If you invoke the service with `this.get`, you can also `gf` there as well:
 
 ``` javascript
 this.get('cookieSettings.someProperty');
@@ -74,7 +73,7 @@ A `gf` on "cookieSettings" in the `get` will also work, as long as there's an in
 
 #### gf: Models
 
-If you have a method call that is related to a model, then a `gf` on it will throw you to that model. For instance,
+If you have a method call that is related to a model, then a `gf` on it will jump to that model. For instance,
 
 ``` javascript
 export default Ember.Model.extend({
@@ -100,7 +99,7 @@ import ControllerCommonMixin from '../../mixins/controller-common';
 export default Ember.Controller.extend(ControllerCommonMixin)
 ```
 
-Using `gf` on "../../mixins/controller-common" will work and send you to the right file, relative to the current one.
+Using `gf` on "../../mixins/controller-common" will send you to the right file, relative to the current one.
 
 ### :Extract
 
@@ -172,13 +171,13 @@ let g:ember_tools_custom_gf_callbacks = ['SomeFunctionName']
 ```
 Default value: []
 
-This variable allows the user to set up custom callbacks for the `gf` mapping. The variable should be a list of function names. The plugin will call those without any arguments.
+This variable allows the user to set up custom callbacks for the `gf` mapping. It should be a list of function names. The plugin will call those without any arguments, in order, and if any of them return anything that's not an empty string, it'll stop execution and use that as the result.
 
-Note that, at this time, the `iskeyword` parameter will be set to include the "." and "/" characters, in order to make it easier to match some ember identifiers. Feel free to change it in your callbacks, it will be reset once the callback is done.
+The current directory for the duration of the callback will be the ember root. Also, at this time, the `iskeyword` parameter will be set to include the "." and "/" characters, in order to make it easier to match some ember identifiers. Feel free to change it in your callbacks, it will be reset once the callback is done.
 
-An example of what you could do can be found in this gist: https://gist.github.com/AndrewRadev/c62132f96deca165b8969eba7bc1dc13
+An example of what you could potentially do can be found in this gist: https://gist.github.com/AndrewRadev/c62132f96deca165b8969eba7bc1dc13
 
-There's quite a few project-specific things, which is why it's not a general-purpose callback. There's also a few invocations of ember_tools' public API, which, unfortunately, you would have to read the source code to understand.
+There's quite a few project-specific things, which is why it's not a general-purpose callback. There's also a few invocations of the plugin's public API, which, unfortunately, you would have to read the source code to understand.
 
 ## Contributing
 
