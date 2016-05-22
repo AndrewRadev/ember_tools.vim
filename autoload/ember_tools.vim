@@ -1,14 +1,30 @@
 function! ember_tools#Init()
-  if !filereadable('ember-cli-build.js')
+  if filereadable('ember-cli-build.js')
+    " then the current directory is the ember root
+    let b:ember_root = fnamemodify('.', ':p:h')
+  endif
+
+  if !exists('b:ember_root')
+    " then let's look for the ember root upwards
+    let file = findfile('ember-cli-build.js', '.;')
+    if file != ''
+      let b:ember_root = fnamemodify(file, ':p:h')
+    endif
+  endif
+
+  if !exists('b:ember_root')
     return
   endif
 
   setlocal includeexpr=ember_tools#Includeexpr()
-
   command! -count=0 -nargs=1 -buffer Extract call ember_tools#extract#Run(<line1>, <line2>, <f-args>)
 endfunction
 
 function! ember_tools#Includeexpr()
+  if !exists('b:ember_root')
+    return ''
+  endif
+
   let callbacks = []
   call extend(callbacks, g:ember_tools_custom_gf_callbacks)
   call extend(callbacks, [
@@ -22,20 +38,38 @@ function! ember_tools#Includeexpr()
         \ ])
 
   let saved_iskeyword  = &iskeyword
+  let saved_cwd = getcwd()
+  let found_file = ''
 
   for callback in callbacks
     try
+      exe 'cd '.b:ember_root
       set iskeyword+=.,-,/
       call ember_tools#cursors#Push()
 
       let path = call(callback, [])
       if path != ''
-        return path
+        let found_file = path
       endif
     finally
       call ember_tools#cursors#Pop()
       let &iskeyword = saved_iskeyword
+      exe 'cd '.saved_cwd
     endtry
+
+    if found_file != ''
+      let absolutized_file = simplify(b:ember_root.'/'.found_file)
+      let relativized_file = fnamemodify(absolutized_file, ':~:.')
+
+      if findfile(relativized_file) != ''
+        return relativized_file
+      else
+        " Seems like Vim has some issues with the path changing due to the
+        " "cd". If the relativized version doesn't work, just return the
+        " absolute path.
+        return absolutized_file
+      endif
+    endif
   endfor
 
   return expand('<cfile>')
