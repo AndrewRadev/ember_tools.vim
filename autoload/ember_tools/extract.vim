@@ -39,7 +39,7 @@ function! ember_tools#extract#Run(start_line, end_line, component_name)
     call writefile(component_lines, 'app/components/'.component_name.'/component.coffee')
   else " javascript
     let component_lines = [
-          \ "`import Ember from 'ember';`",
+          \ "import Ember from 'ember';",
           \ "",
           \ "export default Ember.Component.extend({",
           \ "",
