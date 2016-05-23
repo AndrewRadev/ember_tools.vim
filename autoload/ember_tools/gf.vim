@@ -114,7 +114,7 @@ function! ember_tools#gf#Import()
     exe 'cd '.current_file_dir
     let absolute_path = expand('<cfile>:p')
     cd -
-    let files = glob(fnamemodify(absolute_path.'.*', ':.'), 0, 1)
+    let files = s:Glob(fnamemodify(absolute_path.'.*', ':.'))
 
     if len(files) > 0
       return files[0]
@@ -224,4 +224,15 @@ function! s:ExtractControllerName(filename)
   endif
 
   return name
+endfunction
+
+function! s:Glob(pattern)
+  if v:version >= 740
+    " glob can return a list
+    return glob(a:pattern, 0, 1)
+  else
+    " we'll have to split by newlines and hope there's no files with newlines
+    " in their names
+    return split(glob(a:pattern), "\n")
+  endif
 endfunction

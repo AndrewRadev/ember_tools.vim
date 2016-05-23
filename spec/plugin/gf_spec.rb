@@ -10,7 +10,6 @@ describe "gf mapping" do
       vim.search 'stuff\''
 
       vim.normal 'gf'
-      puts vim.command('messages')
 
       expect(current_file).to eq 'app/stuff.js'
     end
@@ -25,7 +24,6 @@ describe "gf mapping" do
       vim.search 'bar-baz'
 
       vim.normal 'gf'
-      puts vim.command('messages')
 
       expect(current_file).to eq 'app/routes/foo/bar-baz.js'
     end
@@ -40,7 +38,6 @@ describe "gf mapping" do
       vim.search 'foo/bar-baz'
 
       vim.normal 'gf'
-      puts vim.command('messages')
 
       expect(current_file).to eq 'app/components/foo/bar-baz/template.hbs'
     end
