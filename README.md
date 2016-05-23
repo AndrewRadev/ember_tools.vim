@@ -1,3 +1,5 @@
+[![Build Status](https://secure.travis-ci.org/AndrewRadev/ember_tools.vim.png?branch=master)](http://travis-ci.org/AndrewRadev/ember_tools.vim)
+
 ## Usage
 
 This plugin contains various tools to work with ember.js projects. After installing it, just editing files in an ember.js project should be enough to activate them. It's similar to (and inspired by) [rails.vim](https://github.com/tpope/vim-rails).
