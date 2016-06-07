@@ -183,4 +183,4 @@ There's quite a few project-specific things, which is why it's not a general-pur
 
 ## Contributing
 
-Pull requests are welcome, but take a look at [CONTRIBUTING.md](https://github.com/AndrewRadev/ember-tools.vim/blob/master/CONTRIBUTING.md) first for some guidelines.
+Pull requests are welcome, but take a look at [CONTRIBUTING.md](https://github.com/AndrewRadev/ember_tools.vim/blob/master/CONTRIBUTING.md) first for some guidelines.
