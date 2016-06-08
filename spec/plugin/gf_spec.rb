@@ -28,6 +28,20 @@ describe "gf mapping" do
       expect(current_file).to eq 'app/routes/foo/bar-baz.js'
     end
 
+    specify "finding a route with an index.js file" do
+      touch_file 'app/routes/foo/bar-baz/index.js'
+      edit_file 'app/router.js', <<-EOF
+        this.route('foo', function() {
+          this.route('bar-baz');
+        })
+      EOF
+      vim.search 'bar-baz'
+
+      vim.normal 'gf'
+
+      expect(current_file).to eq 'app/routes/foo/bar-baz/index.js'
+    end
+
     specify "finding a component" do
       touch_file 'app/components/foo/bar-baz/template.hbs'
       edit_file 'app/templates/example.hbs', <<-EOF
@@ -198,6 +212,19 @@ describe "gf mapping" do
       vim.normal 'gf'
 
       expect(current_file).to eq 'app/routes/foo/bar-baz.coffee'
+    end
+
+    specify "finding a route with an index.coffee file" do
+      touch_file 'app/routes/foo/bar-baz/index.coffee'
+      edit_file 'app/router.coffee', <<-EOF
+        @route 'foo', ->
+          @route 'bar-baz'
+      EOF
+      vim.search 'bar-baz'
+
+      vim.normal 'gf'
+
+      expect(current_file).to eq 'app/routes/foo/bar-baz/index.coffee'
     end
 
     specify "finding a component" do

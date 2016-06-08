@@ -12,24 +12,26 @@ function! ember_tools#gf#RouterRoute()
   let route_name = expand('<cword>')
   let route_path = [route_name]
 
-  if getline('.') =~ '\<resetNamespace: true\>'
-    return 'app/routes/'.route_name.'.'.ember_tools#LogicExtension()
-  endif
-
-  " Find any parent routes
-  let indent = indent('.')
-
-  while search('^ \{'.(indent - &sw).'}'.route_pattern, 'bW')
-    let route = expand('<cword>')
-    call insert(route_path, route, 0)
+  if getline('.') !~ '\<resetNamespace: true\>'
+    " Find any parent routes
     let indent = indent('.')
 
-    if getline('.') =~ '\<resetNamespace: true\>'
-      break
-    endif
-  endwhile
+    while search('^ \{'.(indent - &sw).'}'.route_pattern, 'bW')
+      let route = expand('<cword>')
+      call insert(route_path, route, 0)
+      let indent = indent('.')
 
-  return 'app/routes/'.join(route_path, '/').'.'.ember_tools#LogicExtension()
+      if getline('.') =~ '\<resetNamespace: true\>'
+        break
+      endif
+    endwhile
+  endif
+
+  let filename = ember_tools#ExistingLogicFile('app/routes/'.join(route_path, '/'))
+  if filename == ''
+    let filename = ember_tools#ExistingLogicFile('app/routes/'.join(route_path, '/').'/index')
+  endif
+  return filename
 endfunction
 
 function! ember_tools#gf#ServiceInjection()
