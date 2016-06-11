@@ -23,10 +23,10 @@ describe ":Extract" do
       # force sync
       vim.command('echo')
 
-      expect(File.exists?('app/components/example-component/component.js')).to be_truthy
-      expect(File.exists?('app/components/example-component/template.hbs')).to be_truthy
+      expect(File.exists?('app/components/example-component.js')).to be_truthy
+      expect(File.exists?('app/templates/components/example-component.hbs')).to be_truthy
 
-      expect(current_file).to eq 'app/components/example-component/template.hbs'
+      expect(current_file).to eq 'app/templates/components/example-component.hbs'
 
       expect_file_contents current_file, <<-EOF
         <div class="second">
@@ -62,10 +62,10 @@ describe ":Extract" do
       # force sync
       vim.command('echo')
 
-      expect(File.exists?('app/components/example-component/component.coffee')).to be_truthy
-      expect(File.exists?('app/components/example-component/template.emblem')).to be_truthy
+      expect(File.exists?('app/components/example-component.coffee')).to be_truthy
+      expect(File.exists?('app/templates/components/example-component.emblem')).to be_truthy
 
-      expect(current_file).to eq 'app/components/example-component/template.emblem'
+      expect(current_file).to eq 'app/templates/components/example-component.emblem'
 
       expect_file_contents current_file, <<-EOF
         .second

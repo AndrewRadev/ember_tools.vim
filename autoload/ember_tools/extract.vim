@@ -1,4 +1,10 @@
 function! ember_tools#extract#Run(start_line, end_line, component_name)
+  function! Create_unless_exists(dirname) abort
+    if !isdirectory(a:dirname)
+      call mkdir(a:dirname, 'p')
+    endif
+  endfunction
+
   if !exists('b:ember_root')
     return
   endif
@@ -11,8 +17,10 @@ function! ember_tools#extract#Run(start_line, end_line, component_name)
     let end_line       = a:end_line
     let component_name = split(a:component_name, ' ')[0]
     let base_indent    = indent(start_line)
+    let template_dir   = 'app/templates/components'
+    let template_file  = template_dir.'/'.component_name.'.'.ember_tools#TemplateExtension()
 
-    let template_file = 'app/components/'.component_name.'/template.'.ember_tools#TemplateExtension()
+    call Create_unless_exists(template_dir)
 
     if ember_tools#util#Filereadable(template_file)
       echoerr 'File "'.template_file.'" already exists'
@@ -43,8 +51,8 @@ function! ember_tools#extract#Run(start_line, end_line, component_name)
             \ "`export default component;`",
             \ ]
 
-      call mkdir('app/components/'.component_name, 'p')
-      call writefile(component_lines, 'app/components/'.component_name.'/component.coffee')
+      call Create_unless_exists('app/components')
+      call writefile(component_lines, 'app/components/'.component_name.'.coffee')
     else " javascript
       let component_lines = [
             \ "import Ember from 'ember';",
@@ -54,8 +62,8 @@ function! ember_tools#extract#Run(start_line, end_line, component_name)
             \ "});",
             \ ]
 
-      call mkdir('app/components/'.component_name, 'p')
-      call writefile(component_lines, 'app/components/'.component_name.'/component.js')
+      call Create_unless_exists('app/components')
+      call writefile(component_lines, 'app/components/'.component_name.'.js')
     endif
 
     call writefile(partial_lines, template_file)
