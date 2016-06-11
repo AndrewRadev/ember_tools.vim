@@ -34,6 +34,21 @@ function! ember_tools#gf#RouterRoute()
   return filename
 endfunction
 
+function! ember_tools#gf#Controller()
+  if !ember_tools#IsLogicFiletype()
+    return ''
+  endif
+
+  if !ember_tools#search#UnderCursor('controllerFor[( ][''"]\zs\k\+[''"]')
+    return ''
+  endif
+
+  let controller_path = split(expand('<cword>'), '\.')
+  let controller_path = map(controller_path, 'ember_tools#util#Dasherize(v:val)')
+
+  return ember_tools#ExistingLogicFile('app/controllers/'.join(controller_path, '/'))
+endfunction
+
 function! ember_tools#gf#ServiceInjection()
   if !ember_tools#IsLogicFiletype()
     return ''

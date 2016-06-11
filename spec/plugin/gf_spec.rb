@@ -42,6 +42,22 @@ describe "gf mapping" do
       expect(current_file).to eq 'app/routes/foo/bar-baz/index.js'
     end
 
+    specify "finding a controller" do
+      touch_file 'app/controllers/foo/bar.js'
+      edit_file 'app/routes/baz.js', <<-EOF
+        export default Ember.Controller.extend({
+          exampleAction() {
+            let controller = this.controllerFor('foo.bar')
+          }
+        });
+      EOF
+      vim.search 'controllerFor'
+
+      vim.normal 'gf'
+
+      expect(current_file).to eq 'app/controllers/foo/bar.js'
+    end
+
     specify "finding a component" do
       touch_file 'app/components/foo/bar-baz/template.hbs'
       edit_file 'app/templates/example.hbs', <<-EOF
@@ -225,6 +241,19 @@ describe "gf mapping" do
       vim.normal 'gf'
 
       expect(current_file).to eq 'app/routes/foo/bar-baz/index.coffee'
+    end
+
+    specify "finding a controller" do
+      touch_file 'app/controllers/foo/bar.coffee'
+      edit_file 'app/routes/baz.coffee', <<-EOF
+        exampleAction: ->
+          let controller = @controllerFor('foo.bar')
+      EOF
+      vim.search 'controllerFor'
+
+      vim.normal 'gf'
+
+      expect(current_file).to eq 'app/controllers/foo/bar.coffee'
     end
 
     specify "finding a component" do
