@@ -10,3 +10,11 @@ endfunction
 function! ember_tools#util#Lowercase(word)
   return substitute(a:word, '^\w', '\l\0', 'g')
 endfunction
+
+" Wrap the native filereadable() function to provide some debug logging.
+function! ember_tools#util#Filereadable(filename)
+  if exists('g:ember_tools_debug')
+    echomsg "Checking existence of file: ".a:filename
+  endif
+  return filereadable(a:filename)
+endfunction

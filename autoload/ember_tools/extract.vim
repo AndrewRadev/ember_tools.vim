@@ -14,7 +14,7 @@ function! ember_tools#extract#Run(start_line, end_line, component_name)
 
     let template_file = 'app/components/'.component_name.'/template.'.ember_tools#TemplateExtension()
 
-    if filereadable(template_file)
+    if ember_tools#util#Filereadable(template_file)
       echoerr 'File "'.template_file.'" already exists'
       return
     endif

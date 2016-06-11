@@ -1,5 +1,5 @@
 function! ember_tools#Init()
-  if filereadable('ember-cli-build.js')
+  if ember_tools#util#Filereadable('ember-cli-build.js')
     " then the current directory is the ember root
     let b:ember_root = fnamemodify('.', ':p:h')
   endif
@@ -145,14 +145,14 @@ endfunction
 
 function! ember_tools#ExistingTemplateFile(file_prefix)
   let file_prefix = a:file_prefix
-  if filereadable(file_prefix.'.emblem') | return file_prefix.'.emblem' | endif
-  if filereadable(file_prefix.'.hbs')    | return file_prefix.'.hbs'    | endif
+  if ember_tools#util#Filereadable(file_prefix.'.emblem') | return file_prefix.'.emblem' | endif
+  if ember_tools#util#Filereadable(file_prefix.'.hbs')    | return file_prefix.'.hbs'    | endif
   return ''
 endfunction
 
 function! ember_tools#ExistingLogicFile(file_prefix)
   let file_prefix = a:file_prefix
-  if filereadable(file_prefix.'.coffee') | return file_prefix.'.coffee' | endif
-  if filereadable(file_prefix.'.js')     | return file_prefix.'.js'     | endif
+  if ember_tools#util#Filereadable(file_prefix.'.coffee') | return file_prefix.'.coffee' | endif
+  if ember_tools#util#Filereadable(file_prefix.'.js')     | return file_prefix.'.js'     | endif
   return ''
 endfunction
