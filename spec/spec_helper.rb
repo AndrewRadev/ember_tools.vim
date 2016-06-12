@@ -29,4 +29,12 @@ RSpec.configure do |config|
   config.before :each do
     touch_file 'ember-cli-build.js'
   end
+
+  config.around :each do |example|
+    example.run
+
+    if example.exception
+      puts "Error encountered, Vim message log:\n#{vim.command(:messages)}"
+    end
+  end
 end
