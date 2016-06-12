@@ -18,6 +18,10 @@ function! ember_tools#extract#Run(start_line, end_line, component_name)
     elseif g:ember_tools_extract_behaviour == 'component-dir'
       let component_file = 'app/components/'.component_name.'/component.'.ember_tools#LogicExtension()
       let template_file  = 'app/components/'.component_name.'/template.'.ember_tools#TemplateExtension()
+    else 
+      echoerr 'Invalid value for setting g:ember_tools_extract_behaviour: "'.g:ember_tools_extract_behaviour.'". '. 
+                \'Valid values: "separate-template", "component-dir"'
+      return
     endif
 
     if ember_tools#util#Filereadable(template_file)
