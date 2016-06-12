@@ -18,6 +18,11 @@ if !exists('g:ember_tools_default_template_filetype')
   let g:ember_tools_default_template_filetype = 'handlebars'
 endif
 
+" possible values: separate-template, component-dir
+if !exists('g:ember_tools_extract_behaviour')
+  let g:ember_tools_extract_behaviour = 'separate-template'
+endif
+
 augroup ember_tools
   autocmd!
 
