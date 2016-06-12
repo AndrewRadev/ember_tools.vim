@@ -26,11 +26,9 @@ end
 RSpec.configure do |config|
   config.include Support::Vim
 
-  config.before :each do
-    touch_file 'ember-cli-build.js'
-  end
-
   config.around :each do |example|
+    touch_file 'ember-cli-build.js'
+
     example.run
 
     if example.exception
