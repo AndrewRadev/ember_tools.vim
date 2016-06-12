@@ -4,10 +4,12 @@ describe ":Extract" do
   after :each do
     # remove extra splits
     vim.command('only')
+    # reset to default settings
+    vim.command('let g:ember_tools_extract_behaviour = "separate-template"')
   end
 
   describe "javascript/hbs" do
-    specify "extract a template to a component" do
+    def perform_extract
       edit_file 'app/templates/example-template.hbs', <<-EOF
         <div class="first">
           <div class="second">
@@ -22,11 +24,15 @@ describe ":Extract" do
 
       # force sync
       vim.command('echo')
+    end
 
-      expect(File.exists?('app/components/example-component/component.js')).to be_truthy
-      expect(File.exists?('app/components/example-component/template.hbs')).to be_truthy
+    specify "extract a template to a component" do
+      perform_extract
 
-      expect(current_file).to eq 'app/components/example-component/template.hbs'
+      expect(File.exists?('app/components/example-component.js')).to be_truthy
+      expect(File.exists?('app/templates/components/example-component.hbs')).to be_truthy
+
+      expect(current_file).to eq 'app/templates/components/example-component.hbs'
 
       expect_file_contents current_file, <<-EOF
         <div class="second">
@@ -39,6 +45,17 @@ describe ":Extract" do
           {{example-component}}
         </div>
       EOF
+    end
+
+    specify "extract a template to a component directory" do
+      vim.command('let g:ember_tools_extract_behaviour = "component-dir"')
+
+      perform_extract
+
+      expect(File.exists?('app/components/example-component/component.js')).to be_truthy
+      expect(File.exists?('app/components/example-component/template.hbs')).to be_truthy
+
+      expect(current_file).to eq 'app/components/example-component/template.hbs'
     end
   end
 
@@ -62,10 +79,10 @@ describe ":Extract" do
       # force sync
       vim.command('echo')
 
-      expect(File.exists?('app/components/example-component/component.coffee')).to be_truthy
-      expect(File.exists?('app/components/example-component/template.emblem')).to be_truthy
+      expect(File.exists?('app/components/example-component.coffee')).to be_truthy
+      expect(File.exists?('app/templates/components/example-component.emblem')).to be_truthy
 
-      expect(current_file).to eq 'app/components/example-component/template.emblem'
+      expect(current_file).to eq 'app/templates/components/example-component.emblem'
 
       expect_file_contents current_file, <<-EOF
         .second

@@ -12,12 +12,25 @@ function! ember_tools#extract#Run(start_line, end_line, component_name)
     let component_name = split(a:component_name, ' ')[0]
     let base_indent    = indent(start_line)
 
-    let template_file = 'app/components/'.component_name.'/template.'.ember_tools#TemplateExtension()
+    if g:ember_tools_extract_behaviour == 'separate-template'
+      let component_file = 'app/components/'.component_name.'.'.ember_tools#LogicExtension()
+      let template_file  = 'app/templates/components/'.component_name.'.'.ember_tools#TemplateExtension()
+    elseif g:ember_tools_extract_behaviour == 'component-dir'
+      let component_file = 'app/components/'.component_name.'/component.'.ember_tools#LogicExtension()
+      let template_file  = 'app/components/'.component_name.'/template.'.ember_tools#TemplateExtension()
+    else 
+      echoerr 'Invalid value for setting g:ember_tools_extract_behaviour: "'.g:ember_tools_extract_behaviour.'". '. 
+                \'Valid values: "separate-template", "component-dir"'
+      return
+    endif
 
     if ember_tools#util#Filereadable(template_file)
       echoerr 'File "'.template_file.'" already exists'
       return
     endif
+
+    call s:EnsureContainingDirExists(component_file)
+    call s:EnsureContainingDirExists(template_file)
 
     let partial_lines = []
     for line in getline(start_line, end_line)
@@ -42,9 +55,6 @@ function! ember_tools#extract#Run(start_line, end_line, component_name)
             \ "",
             \ "`export default component;`",
             \ ]
-
-      call mkdir('app/components/'.component_name, 'p')
-      call writefile(component_lines, 'app/components/'.component_name.'/component.coffee')
     else " javascript
       let component_lines = [
             \ "import Ember from 'ember';",
@@ -53,15 +63,21 @@ function! ember_tools#extract#Run(start_line, end_line, component_name)
             \ "",
             \ "});",
             \ ]
-
-      call mkdir('app/components/'.component_name, 'p')
-      call writefile(component_lines, 'app/components/'.component_name.'/component.js')
     endif
 
+    call writefile(component_lines, component_file)
     call writefile(partial_lines, template_file)
 
     exe 'split '.template_file
   finally
     exe 'cd '.saved_cwd
   endtry
+endfunction
+
+function! s:EnsureContainingDirExists(filename)
+  let dirname = fnamemodify(a:filename, ':h')
+
+  if !isdirectory(dirname)
+    call mkdir(dirname, 'p')
+  endif
 endfunction
