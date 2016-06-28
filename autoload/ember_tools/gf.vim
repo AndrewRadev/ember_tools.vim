@@ -31,6 +31,10 @@ function! ember_tools#gf#RouterRoute()
   if filename == ''
     let filename = ember_tools#ExistingLogicFile('app/routes/'.join(route_path, '/').'/index')
   endif
+  if filename == ''
+    let filename = ember_tools#ExistingLogicFile('app/pods/'.join(route_path, '/').'/route')
+  endif
+
   return filename
 endfunction
 
@@ -46,7 +50,7 @@ function! ember_tools#gf#Controller()
   let controller_path = split(expand('<cword>'), '\.')
   let controller_path = map(controller_path, 'ember_tools#util#Dasherize(v:val)')
 
-  return ember_tools#ExistingLogicFile('app/controllers/'.join(controller_path, '/'))
+  return s:FindController(join(controller_path, '/'))
 endfunction
 
 function! ember_tools#gf#ServiceInjection()
@@ -210,8 +214,14 @@ function! s:FindComponentTemplate(component_name)
   return ''
 endfunction
 
-function! s:FindController(component_name)
-  return ember_tools#ExistingLogicFile('app/controllers/'.a:component_name)
+function! s:FindController(name)
+  let existing_file = ember_tools#ExistingLogicFile('app/controllers/'.a:name)
+  if existing_file != '' | return existing_file | endif
+
+  let existing_file = ember_tools#ExistingLogicFile('app/pods/'.a:name.'/controller')
+  if existing_file != '' | return existing_file | endif
+
+  return ''
 endfunction
 
 function! s:IsComponentTemplate(filename)
@@ -229,6 +239,9 @@ function! s:ExtractComponentName(filename)
   if name == ''
     let name = matchstr(a:filename, 'app/components/\zs\k\+\ze/template\.\%(emblem\|hbs\)')
   endif
+  if name == ''
+    let name = matchstr(a:filename, 'app/pods/\zs\k\+\ze/template\.\%(emblem\|hbs\)')
+  endif
 
   if name == ''
     let name = matchstr(a:filename, 'app/components/\zs\k\+\ze\.\%(coffee\|js\)')
@@ -236,14 +249,22 @@ function! s:ExtractComponentName(filename)
   if name == ''
     let name = matchstr(a:filename, 'app/components/\zs\k\+\ze/component\.\%(coffee\|js\)')
   endif
+  if name == ''
+    let name = matchstr(a:filename, 'app/pods/\zs\k\+\ze/component\.\%(coffee\|js\)')
+  endif
 
   return name
 endfunction
 
 function! s:ExtractControllerName(filename)
   let name = matchstr(a:filename, 'app/templates/\zs\k\+\ze\.\%(emblem\|hbs\)')
+
   if name == ''
     let name = matchstr(a:filename, 'app/\%(controllers\|routes\)/\zs\k\+\ze\.\%(coffee\|js\)')
+  endif
+
+  if name == ''
+    let name = matchstr(a:filename, 'app/pods/\zs\k\+\ze/controller\.\%(coffee\|js\)')
   endif
 
   return name

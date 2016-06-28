@@ -28,6 +28,20 @@ describe "gf mapping" do
       expect(current_file).to eq 'app/routes/foo/bar-baz.js'
     end
 
+    specify "finding a route in a pod structure" do
+      touch_file 'app/pods/foo/bar-baz/route.js'
+      edit_file 'app/router.js', <<-EOF
+        this.route('foo', function() {
+          this.route('bar-baz');
+        })
+      EOF
+      vim.search 'bar-baz'
+
+      vim.normal 'gf'
+
+      expect(current_file).to eq 'app/pods/foo/bar-baz/route.js'
+    end
+
     specify "finding a route with an index.js file" do
       touch_file 'app/routes/foo/bar-baz/index.js'
       edit_file 'app/router.js', <<-EOF
@@ -56,6 +70,22 @@ describe "gf mapping" do
       vim.normal 'gf'
 
       expect(current_file).to eq 'app/controllers/foo/bar.js'
+    end
+
+    specify "finding a controller within a pod structure" do
+      touch_file 'app/pods/foo/bar/controller.js'
+      edit_file 'app/pods/foo/bar/route.js', <<-EOF
+        export default Ember.Controller.extend({
+          exampleAction() {
+            let controller = this.controllerFor('foo.bar')
+          }
+        });
+      EOF
+      vim.search 'controllerFor'
+
+      vim.normal 'gf'
+
+      expect(current_file).to eq 'app/pods/foo/bar/controller.js'
     end
 
     specify "finding a component" do
