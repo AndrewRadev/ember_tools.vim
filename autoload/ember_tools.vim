@@ -29,6 +29,7 @@ function! ember_tools#Includeexpr()
   call extend(callbacks, g:ember_tools_custom_gf_callbacks)
   call extend(callbacks, [
         \ 'ember_tools#gf#RouterRoute',
+        \ 'ember_tools#gf#TransitionRoute',
         \ 'ember_tools#gf#Controller',
         \ 'ember_tools#gf#Action',
         \ 'ember_tools#gf#ServiceInjection',

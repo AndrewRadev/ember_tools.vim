@@ -14,7 +14,7 @@ describe "gf mapping" do
       expect(current_file).to eq 'app/stuff.js'
     end
 
-    specify "finding a route" do
+    specify "finding a route from the router" do
       touch_file 'app/routes/foo/bar-baz.js'
       edit_file 'app/router.js', <<-EOF
         this.route('foo', function() {
@@ -22,6 +22,20 @@ describe "gf mapping" do
         })
       EOF
       vim.search 'bar-baz'
+
+      vim.normal 'gf'
+
+      expect(current_file).to eq 'app/routes/foo/bar-baz.js'
+    end
+
+    specify "finding a route from a transitionTo" do
+      touch_file 'app/routes/foo/bar-baz.js'
+      edit_file 'app/controllers/foo.js', <<-EOF
+        beforeModel() {
+          this.transitionTo('foo.bar-baz');
+        }
+      EOF
+      vim.search 'foo.bar-baz'
 
       vim.normal 'gf'
 

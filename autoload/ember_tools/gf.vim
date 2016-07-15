@@ -27,15 +27,22 @@ function! ember_tools#gf#RouterRoute()
     endwhile
   endif
 
-  let filename = ember_tools#ExistingLogicFile('app/routes/'.join(route_path, '/'))
-  if filename == ''
-    let filename = ember_tools#ExistingLogicFile('app/routes/'.join(route_path, '/').'/index')
-  endif
-  if filename == ''
-    let filename = ember_tools#ExistingLogicFile('app/pods/'.join(route_path, '/').'/route')
+  return s:FindRoute(join(route_path, '/'))
+endfunction
+
+function! ember_tools#gf#TransitionRoute()
+  if !ember_tools#IsLogicFiletype()
+    return ''
   endif
 
-  return filename
+  if !ember_tools#search#UnderCursor('transitionTo\%(Route\)\=[( ][''"]\zs\k\+[''"]')
+    return ''
+  endif
+
+  let route_path = split(expand('<cword>'), '\.')
+  let route_path = map(route_path, 'ember_tools#util#Dasherize(v:val)')
+
+  return s:FindRoute(join(route_path, '/'))
 endfunction
 
 function! ember_tools#gf#Controller()
@@ -222,6 +229,18 @@ function! s:FindController(name)
   if existing_file != '' | return existing_file | endif
 
   return ''
+endfunction
+
+function! s:FindRoute(name)
+  let filename = ember_tools#ExistingLogicFile('app/routes/'.a:name)
+  if filename == ''
+    let filename = ember_tools#ExistingLogicFile('app/routes/'.a:name.'/index')
+  endif
+  if filename == ''
+    let filename = ember_tools#ExistingLogicFile('app/pods/'.a:name.'/route')
+  endif
+
+  return filename
 endfunction
 
 function! s:IsComponentTemplate(filename)
