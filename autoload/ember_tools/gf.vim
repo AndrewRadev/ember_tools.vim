@@ -188,7 +188,7 @@ function! s:FindService(property)
   let service_name = split(property, '\.')[0]
   let dasherized_service_name = ember_tools#util#Dasherize(service_name)
 
-  if search('^\s*'.service_name.':\s*Ember\.inject\.service()', 'bcWn')
+  if search('^\s*'.service_name.':\s*\%(Ember\.\)\=\%(inject\.\)\=service()', 'bcWn')
     return ember_tools#ExistingLogicFile('app/services/'.dasherized_service_name)
   else
     return ''
