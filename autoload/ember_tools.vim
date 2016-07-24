@@ -18,6 +18,9 @@ function! ember_tools#Init()
 
   setlocal includeexpr=ember_tools#Includeexpr()
   command! -count=0 -nargs=1 -buffer Extract call ember_tools#extract#Run(<line1>, <line2>, <f-args>)
+
+  command! -count=0 -buffer Unpack call ember_tools#unpack#Run(<count>)
+  command! -count=0 -buffer Pack   call ember_tools#unpack#Reverse(<count>)
 endfunction
 
 function! ember_tools#Includeexpr()
