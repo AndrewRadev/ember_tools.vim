@@ -92,10 +92,10 @@ function! ember_tools#gf#Model()
   endif
 
   let model_methods = [
-        \ 'createRecord',
-        \ 'modelFor',
-        \ 'belongsTo',
-        \ 'hasMany'
+        \ 'adapterFor', 'createRecord', 'deleteRecord', 'findAll', 'findRecord',
+        \ 'getReference', 'modelFor', 'peekAll', 'peekRecord', 'pushPayload',
+        \ 'query', 'queryRecord', 'serializerFor', 'unloadAll',
+        \ 'belongsTo', 'hasMany',
         \ ]
 
   if !ember_tools#search#UnderCursor('\%('.join(model_methods, '\|').'\)[( ][''"]\zs\k\+[''"]')
