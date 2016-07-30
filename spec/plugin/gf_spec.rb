@@ -190,6 +190,44 @@ describe "gf mapping" do
       expect(current_line.strip).to eq 'exampleAction() {'
     end
 
+    specify "finding a controller property" do
+      edit_file 'app/controllers/foo.js', <<-EOF
+        export default Ember.Controller.extend({
+          showSomething: true
+        });
+      EOF
+      edit_file 'app/templates/foo.hbs', <<-EOF
+        {{#if showSomething}}
+          <div>Something</div>
+        {{/if}}
+      EOF
+      vim.search 'showSomething'
+
+      vim.normal 'gf'
+
+      expect(current_file).to eq 'app/controllers/foo.js'
+      expect(current_line.strip).to eq 'showSomething: true'
+    end
+
+    specify "finding a component property" do
+      edit_file 'app/components/foo/bar-baz/component.js', <<-EOF
+        export default Ember.Component.extend({
+          showSomething: true
+        });
+      EOF
+      edit_file 'app/components/foo/bar-baz/template.hbs', <<-EOF
+        {{#if showSomething}}
+          <div>Something</div>
+        {{/if}}
+      EOF
+      vim.search 'showSomething'
+
+      vim.normal 'gf'
+
+      expect(current_file).to eq 'app/components/foo/bar-baz/component.js'
+      expect(current_line.strip).to eq 'showSomething: true'
+    end
+
     describe "finding a service" do
       before :each do
         touch_file 'app/services/example-service.js'

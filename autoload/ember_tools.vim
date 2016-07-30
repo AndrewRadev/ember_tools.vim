@@ -32,6 +32,7 @@ function! ember_tools#Includeexpr()
         \ 'ember_tools#gf#TransitionRoute',
         \ 'ember_tools#gf#Controller',
         \ 'ember_tools#gf#Action',
+        \ 'ember_tools#gf#Property',
         \ 'ember_tools#gf#ServiceInjection',
         \ 'ember_tools#gf#ServiceProperty',
         \ 'ember_tools#gf#Model',

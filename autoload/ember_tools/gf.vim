@@ -183,6 +183,49 @@ function! ember_tools#gf#Action()
   endif
 endfunction
 
+function! ember_tools#gf#Property()
+  if !ember_tools#IsTemplateFiletype()
+    return ''
+  endif
+
+  let current_file = expand('%:.')
+  let property_name = expand('<cword>')
+
+  if s:IsComponentTemplate(current_file)
+    let component_name = s:ExtractComponentName(current_file)
+    let result = s:FindComponentLogic(component_name)
+  elseif s:IsTemplate(current_file)
+    let controller_name = s:ExtractControllerName(current_file)
+    let result = s:FindController(controller_name)
+  else
+    let result = ''
+  endif
+
+  if result == ''
+    " no file was found, try something else
+    return ''
+  endif
+
+  let property_pattern = '^\s*\zs'.property_name.':'
+  let property_found_in_file = 0
+
+  " Check if the property really is that file
+  for line in readfile(result)
+    if line =~ property_pattern
+      let property_found_in_file = 1
+      break
+    endif
+  endfor
+
+  if !property_found_in_file
+    " we should try something else
+    return ''
+  endif
+
+  call ember_tools#SetFileOpenCallback(result, property_pattern)
+  return result
+endfunction
+
 function! s:FindService(property)
   let property = a:property
   let service_name = split(property, '\.')[0]
