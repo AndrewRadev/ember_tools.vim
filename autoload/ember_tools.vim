@@ -80,18 +80,19 @@ endfunction
 
 function! ember_tools#SetFileOpenCallback(filename, ...)
   let searches = a:000
+  let filename = fnamemodify(a:filename, ':p')
 
   augroup ember_tools_file_open_callback
     autocmd!
 
-    echomsg 'autocmd BufEnter '.a:filename.' normal! gg'
-    exe 'autocmd BufEnter '.a:filename.' normal! gg'
+    echomsg 'autocmd BufEnter '.filename.' normal! gg'
+    exe 'autocmd BufEnter '.filename.' normal! gg'
     for pattern in searches
-      echomsg 'autocmd BufEnter '.a:filename.' call search("'.escape(pattern, '"\').'")'
-      exe 'autocmd BufEnter '.a:filename.' call search("'.escape(pattern, '"\').'")'
+      echomsg 'autocmd BufEnter '.filename.' call search("'.escape(pattern, '"\').'")'
+      exe 'autocmd BufEnter '.filename.' call search("'.escape(pattern, '"\').'")'
     endfor
-    echomsg 'autocmd BufEnter '.a:filename.' call ember_tools#ClearFileOpenCallback()'
-    exe 'autocmd BufEnter '.a:filename.' call ember_tools#ClearFileOpenCallback()'
+    echomsg 'autocmd BufEnter '.filename.' call ember_tools#ClearFileOpenCallback()'
+    exe 'autocmd BufEnter '.filename.' call ember_tools#ClearFileOpenCallback()'
   augroup END
 endfunction
 
