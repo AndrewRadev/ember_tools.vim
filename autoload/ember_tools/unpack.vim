@@ -1,9 +1,8 @@
 function! ember_tools#unpack#Run(visual)
-  " TODO (2016-07-06) Visual
+  " TODO (2016-08-07) Multiline imports (look for the closing ; of the line?)
+  " TODO (2016-08-07) Visual mode support
   " TODO (2016-07-06) Nested unpacking:
   "   const { computed, Controller, inject: { service }, observer } = Ember;
-  " TODO (2016-07-06) Update *all* instances of namespace.member?
-  " TODO (2016-07-06) repeat.vim support
 
   let saved_view = winsaveview()
 
@@ -31,6 +30,7 @@ function! ember_tools#unpack#Run(visual)
     call setline('.', unpacking)
 
     call winrestview(saved_view)
+    silent! call repeat#set(":call ember_tools#unpack#Run(0)\<cr>")
     return
   endif
 
@@ -51,6 +51,7 @@ function! ember_tools#unpack#Run(visual)
 
   call setline('.', 'const { '.member.' } = '.namespace.';')
   call winrestview(saved_view)
+  silent! call repeat#set(":call ember_tools#unpack#Run(0)\<cr>")
 endfunction
 
 function! ember_tools#unpack#Reverse(visual)
