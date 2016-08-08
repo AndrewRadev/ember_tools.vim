@@ -1,6 +1,5 @@
-function! ember_tools#unpack#Run(visual)
+function! ember_tools#unpack#Run()
   " TODO (2016-08-07) Multiline imports (look for the closing ; of the line?)
-  " TODO (2016-08-07) Visual mode support
   " TODO (2016-07-06) Nested unpacking:
   "   const { computed, Controller, inject: { service }, observer } = Ember;
 
@@ -51,9 +50,52 @@ function! ember_tools#unpack#Run(visual)
 
   call setline('.', 'const { '.member.' } = '.namespace.';')
   call winrestview(saved_view)
-  silent! call repeat#set(":call ember_tools#unpack#Run(0)\<cr>")
+  silent! call repeat#set(":call ember_tools#unpack#Run()\<cr>")
 endfunction
 
-function! ember_tools#unpack#Reverse(visual)
-  " code
+function! ember_tools#unpack#Reverse()
+  let saved_view = winsaveview()
+  let variable = expand('<cword>')
+
+  if searchpair('const {', '', '}\s*=\s*\zs\k\+', 'W') <= 0
+    return
+  endif
+
+  let prefix = expand('<cword>')
+
+  call search('\<'.variable.'\>', 'bW')
+
+  " Remove variable from const line
+  exe 's/,\s*\%#'.variable.'//e'
+  exe 's/\%#'.variable.',\=\s*\ze\%(\k\| }\)//e'
+
+  " Handle empty const blocks
+  if getline('.') =~ '^const {\s*} ='
+    let next_lineno = nextnonblank(line('.') + 1)
+
+    if getline(next_lineno) !~ '^const'
+      " it's something other than another const line, let's delete all the
+      " whitespace up until that point
+      exe line('.').','.(next_lineno - 1).'delete _'
+    else
+      " just delete this line
+      delete _
+    endif
+  endif
+
+  " Add prefix everywhere
+  normal! G$
+  let search_flags = "w"
+  let variable_pattern = '\%('.prefix.'\.\)\@<!\<'.variable.'\>'
+
+  while search(variable_pattern, search_flags) > 0
+    if synIDattr(synID(line('.'), col('.'), 1), 'name') !~ 'String\|Comment'
+      exe 'normal! i'.prefix.'.'
+      " go back to the search
+      call search(variable_pattern)
+    endif
+    let search_flags = "W"
+  endwhile
+
+  call winrestview(saved_view)
 endfunction
