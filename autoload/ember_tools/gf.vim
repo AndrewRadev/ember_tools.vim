@@ -113,7 +113,7 @@ function! ember_tools#gf#TemplateComponent()
     return ''
   endif
 
-  if !ember_tools#search#UnderCursor('^\s*\%(=\|{{\)\{}\s*\zs\k\+')
+  if !ember_tools#search#UnderCursor('^\s*\%(=\|{{\#\|{{\)\{}\s*\zs\k\+')
     return ''
   endif
 
