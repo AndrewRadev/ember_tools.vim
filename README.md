@@ -148,7 +148,76 @@ And the header-navigation template file will be opened in a split window and wil
 
 If the original template is an emblem one, the component will also have an emblem template, but if you'd like to specify explicitly what templates you prefer, set the `g:ember_tools_default_logic_filetype` and/or `g:ember_tools_default_template_filetype` configuration variables.
 
+### :Unpack
 
+The `:Unpack` command helps you unpack an imported variable into its component pieces. An example might looks something like this:
+
+``` javascript
+import Ember from 'ember';
+
+export default Ember.Controller.extend({
+  foo: Ember.computed.equal('bar', 'baz')
+});
+```
+
+Running the `:Unpack` command with the cursor on `Ember.Controller` would lead to the following result:
+
+``` javascript
+import Ember from 'ember';
+
+const { Controller } = Ember;
+
+export default Controller.extend({
+  foo: Ember.computed.equal('bar', 'baz')
+});
+```
+
+The command creates a `const { ... } = ` line that unpacks the `Ember` variable's `Controller` component into its own variable.
+
+You can continue to run `:Unpack` on, for instance, `Ember.computed.equal`, and then once again on the remaining `computed.equal` (if you have [repeat.vim](https://github.com/tpope/vim-repeat) installed, you can just trigger the `.` mapping) to get:
+
+``` javascript
+import Ember from 'ember';
+
+const { Controller, computed } = Ember;
+const { equal } = computed;
+
+export default Controller.extend({
+  foo: equal('bar', 'baz')
+});
+```
+
+The command adds new entries to the end of the list. If you'd like to sort them in some way afterwards, you can try using a different plugin of mine, [sideways](https://github.com/AndrewRadev/sideways.vim).
+
+### :Inline
+
+The `:Inline` command inlines an "unpacked" variable. If you have code like this:
+
+``` javascript
+import Ember from 'ember';
+
+const { computed, Controller } = Ember;
+
+export default Controller.extend({
+  foo: computed.equal('bar', 'baz')
+  bar: computed.equal('baz', 'qux')
+});
+```
+
+Running `:Inline` on `computed` within the `const { ... }` definition will remove it from that list and replace it across the file (ignoring strings and comments) with `Ember.computed`.
+
+``` javascript
+import Ember from 'ember';
+
+const { Controller } = Ember;
+
+export default Controller.extend({
+  foo: Ember.computed.equal('bar', 'baz')
+  bar: Ember.computed.equal('baz', 'qux')
+});
+```
+
+For now, this is simply a reversal of the `:Unpack` command. In the future, the `:Inline` command might also inline other kinds of constructs, like local variables or properties.
 
 ## Settings
 
