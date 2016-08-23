@@ -17,10 +17,15 @@ function! ember_tools#Init()
   endif
 
   setlocal includeexpr=ember_tools#Includeexpr()
-  command! -count=0 -nargs=1 -buffer Extract call ember_tools#extract#Run(<line1>, <line2>, <f-args>)
 
-  command! -buffer Unpack call ember_tools#unpack#Run()
-  command! -buffer Inline call ember_tools#unpack#Reverse()
+  if ember_tools#IsTemplateFiletype()
+    command! -count=0 -nargs=1 -buffer Extract call ember_tools#extract#Run(<line1>, <line2>, <f-args>)
+  endif
+
+  if &filetype is 'javascript'
+    command! -buffer Unpack call ember_tools#unpack#Run()
+    command! -buffer Inline call ember_tools#unpack#Reverse()
+  end
 endfunction
 
 function! ember_tools#Includeexpr()
