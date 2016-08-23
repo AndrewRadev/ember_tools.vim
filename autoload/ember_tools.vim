@@ -93,13 +93,10 @@ function! ember_tools#SetFileOpenCallback(filename, ...)
   augroup ember_tools_file_open_callback
     autocmd!
 
-    echomsg 'autocmd BufEnter '.filename.' normal! gg'
     exe 'autocmd BufEnter '.filename.' normal! gg'
     for pattern in searches
-      echomsg 'autocmd BufEnter '.filename.' call search("'.escape(pattern, '"\').'")'
       exe 'autocmd BufEnter '.filename.' call search("'.escape(pattern, '"\').'")'
     endfor
-    echomsg 'autocmd BufEnter '.filename.' call ember_tools#ClearFileOpenCallback()'
     exe 'autocmd BufEnter '.filename.' call ember_tools#ClearFileOpenCallback()'
   augroup END
 endfunction
