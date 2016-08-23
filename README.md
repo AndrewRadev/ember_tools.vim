@@ -250,6 +250,24 @@ An example of what you could potentially do can be found in this gist: https://g
 
 There's quite a few project-specific things, which is why it's not a general-purpose callback. There's also a few invocations of the plugin's public API, which, unfortunately, you would have to read the source code to understand.
 
+
+``` vim
+let g:ember_tools_extract_behaviour = 'component-dir'
+```
+
+Default value: "separate-template"
+
+This setting controls the behaviour of `:Extract` regarding what kind of files to generate and where. The options are:
+
+- "separate-template" (the default):
+    - Component file: `app/components/<component-name>.js`
+    - Template file: `app/templates/components/<component-name>.hbs`
+- "component-dir"
+    - Component file: `app/components/<component-name>/component.js`
+    - Template file: `app/components/<component-name>/template.hbs`
+
+The file extensions might not be "js" and "hbs", depending on what the current filetype is and what other settings are set to.
+
 ## Contributing
 
 Pull requests are welcome, but take a look at [CONTRIBUTING.md](https://github.com/AndrewRadev/ember_tools.vim/blob/master/CONTRIBUTING.md) first for some guidelines.
