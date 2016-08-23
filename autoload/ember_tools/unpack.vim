@@ -29,7 +29,7 @@ function! ember_tools#unpack#Run()
     call setline('.', unpacking)
 
     call winrestview(saved_view)
-    silent! call repeat#set(":call ember_tools#unpack#Run(0)\<cr>")
+    silent! call repeat#set(":call ember_tools#unpack#Run()\<cr>")
     return
   endif
 
@@ -91,11 +91,10 @@ function! ember_tools#unpack#Reverse()
   while search(variable_pattern, search_flags) > 0
     if synIDattr(synID(line('.'), col('.'), 1), 'name') !~ 'String\|Comment'
       exe 'normal! i'.prefix.'.'
-      " go back to the search
-      call search(variable_pattern)
     endif
     let search_flags = "W"
   endwhile
 
   call winrestview(saved_view)
+  silent! call repeat#set(":call ember_tools#unpack#Reverse()\<cr>")
 endfunction
