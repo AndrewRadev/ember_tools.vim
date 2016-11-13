@@ -248,6 +248,9 @@ function! s:FindComponentLogic(component_name)
   let existing_file = ember_tools#ExistingTemplateFile('app/pods/'.a:component_name.'/component')
   if existing_file != '' | return existing_file | endif
 
+  let existing_file = ember_tools#ExistingTemplateFile('app/pods/components/'.a:component_name.'/component')
+  if existing_file != '' | return existing_file | endif
+
   return ''
 endfunction
 
@@ -259,6 +262,9 @@ function! s:FindComponentTemplate(component_name)
   if existing_file != '' | return existing_file | endif
 
   let existing_file = ember_tools#ExistingTemplateFile('app/pods/'.a:component_name.'/template')
+  if existing_file != '' | return existing_file | endif
+
+  let existing_file = ember_tools#ExistingTemplateFile('app/pods/components/'.a:component_name.'/template')
   if existing_file != '' | return existing_file | endif
 
   return ''
