@@ -1,11 +1,25 @@
 require 'spec_helper'
+require 'json'
 
 describe "gf mapping" do
   describe "javascript/handlebars" do
-    specify "finding an import" do
+    specify "finding a relative import" do
       touch_file 'app/stuff.js'
       edit_file 'app/foo/bar/baz.js', <<-EOF
         import stuff from '../../stuff';
+      EOF
+      vim.search 'stuff\''
+
+      vim.normal 'gf'
+
+      expect(current_file).to eq 'app/stuff.js'
+    end
+
+    specify "finding an app-relative import" do
+      write_file 'package.json', JSON.dump({'name' => 'appname'})
+      touch_file 'app/stuff.js'
+      edit_file 'app/foo/bar/baz.js', <<-EOF
+        import stuff from 'appname/stuff';
       EOF
       vim.search 'stuff\''
 

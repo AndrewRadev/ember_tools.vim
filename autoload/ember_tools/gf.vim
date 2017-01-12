@@ -138,6 +138,24 @@ function! ember_tools#gf#Import()
   let current_file     = expand('%')
   let current_file_dir = expand('%:h')
 
+  if exists('*json_decode') && filereadable('package.json')
+    let package_json = json_decode(join(readfile('package.json'), "\n"))
+  else
+    let package_json = {}
+  endif
+
+  if package_json != {} &&
+        \ has_key(package_json, 'name') &&
+        \ expand('<cfile>') =~ '^'.package_json.name.'/'
+    " the import starts with the app name
+    let app_path = substitute(expand('<cfile>'), '^'.package_json.name.'/', 'app/', '')
+    let files = s:Glob(app_path.'.*')
+
+    if len(files) > 0
+      return files[0]
+    endif
+  endif
+
   if current_file =~ '^.'
     exe 'cd '.current_file_dir
     let absolute_path = expand('<cfile>:p')
