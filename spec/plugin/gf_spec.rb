@@ -258,7 +258,7 @@ describe "gf mapping" do
       expect(current_line.strip).to eq 'showSomething: true'
     end
 
-    describe "finding a service" do
+    describe "finding an injected service" do
       before :each do
         touch_file 'app/services/example-service.js'
         edit_file 'app/routes/example-route.js', <<-EOF
@@ -278,10 +278,37 @@ describe "gf mapping" do
         expect(current_file).to eq 'app/services/example-service.js'
       end
 
-      it "finds a service from its inject() line" do
+      it "finds a service from its getter" do
         vim.search 'this.get(\'\zsexampleService.'
         vim.normal 'gf'
         expect(current_file).to eq 'app/services/example-service.js'
+      end
+    end
+
+    describe "finding an injected controller" do
+      before :each do
+        touch_file 'app/controllers/example.js'
+        edit_file 'app/controllers/other.js', <<-EOF
+          export default Ember.Controller.extend({
+            exampleController: Ember.inject.controller('example')
+          });
+
+          beforeModel: function() {
+            this.get('exampleController.exampleProperty').doSomething();
+          }
+        EOF
+      end
+
+      it "finds a controller from its inject() line" do
+        vim.search 'exampleController: Ember.inject.controller'
+        vim.normal 'gf'
+        expect(current_file).to eq 'app/controllers/example.js'
+      end
+
+      it "finds a controller from its getter" do
+        vim.search 'this.get(\'\zsexampleController.'
+        vim.normal 'gf'
+        expect(current_file).to eq 'app/controllers/example.js'
       end
     end
 

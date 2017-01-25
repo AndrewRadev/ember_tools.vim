@@ -60,20 +60,20 @@ function! ember_tools#gf#Controller()
   return s:FindController(join(controller_path, '/'))
 endfunction
 
-function! ember_tools#gf#ServiceInjection()
+function! ember_tools#gf#Injection()
   if !ember_tools#IsLogicFiletype()
     return ''
   endif
 
-  if !ember_tools#search#UnderCursor('^\s*\zs\k\+:\s*Ember\.inject\.service()')
+  if !ember_tools#search#UnderCursor('^\s*\zs\k\+:\s*\%(Ember\.\)\=inject\.')
     return ''
   endif
 
   let property = expand('<cword>')
-  return s:FindService(property)
+  return s:FindInjection(property)
 endfunction
 
-function! ember_tools#gf#ServiceProperty()
+function! ember_tools#gf#InjectedProperty()
   if !ember_tools#IsLogicFiletype()
     return ''
   endif
@@ -83,7 +83,7 @@ function! ember_tools#gf#ServiceProperty()
   endif
 
   let property = expand('<cword>')
-  return s:FindService(property)
+  return s:FindInjection(property)
 endfunction
 
 function! ember_tools#gf#Model()
@@ -244,16 +244,30 @@ function! ember_tools#gf#Property()
   return result
 endfunction
 
-function! s:FindService(property)
+function! s:FindInjection(property)
   let property = a:property
-  let service_name = split(property, '\.')[0]
-  let dasherized_service_name = ember_tools#util#Dasherize(service_name)
+  let name = split(property, '\.')[0]
+  let injection_pattern = '^\s*'.name.':\s*\%(Ember\.\)\=\%(inject\.\)\=\(service\|controller\)('
 
-  if search('^\s*'.service_name.':\s*\%(Ember\.\)\=\%(inject\.\)\=service()', 'bcWn')
-    return ember_tools#ExistingLogicFile('app/services/'.dasherized_service_name)
-  else
+  if !search(injection_pattern, 'bcW')
     return ''
   endif
+
+  let injection_line = getline('.')
+  let injection_type = substitute(injection_line, injection_pattern.'.*$', '\1', '')
+
+  " Check if an explicit name has been given
+  let remainder_of_line = substitute(injection_line, injection_pattern, '', '')
+  let explicit_name_pattern = '[''"]\zs\k\+\ze[''"]'
+
+  if remainder_of_line =~ explicit_name_pattern
+    let explicit_name = matchstr(remainder_of_line, explicit_name_pattern)
+    let entity_name = ember_tools#util#Dasherize(explicit_name)
+  else
+    let entity_name = ember_tools#util#Dasherize(name)
+  endif
+
+  return ember_tools#ExistingLogicFile('app/'.injection_type.'s/'.entity_name)
 endfunction
 
 function! s:FindComponentLogic(component_name)
