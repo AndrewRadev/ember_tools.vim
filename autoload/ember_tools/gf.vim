@@ -130,6 +130,19 @@ function! ember_tools#gf#TemplateComponent()
   return component_file
 endfunction
 
+function! ember_tools#gf#TemplatePartial()
+  if !ember_tools#IsTemplateFiletype()
+    return ''
+  endif
+
+  if !ember_tools#search#UnderCursor('^\s*{{\s*partial\s*["'']\zs\k\+["'']')
+    return ''
+  endif
+
+  let partial_name = expand('<cword>')
+  return ember_tools#ExistingTemplateFile('app/templates/'.partial_name)
+endfunction
+
 function! ember_tools#gf#Import()
   if !ember_tools#IsLogicFiletype()
     return ''

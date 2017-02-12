@@ -116,6 +116,18 @@ describe "gf mapping" do
       expect(current_file).to eq 'app/pods/foo/bar/controller.js'
     end
 
+    specify "finding a partial template" do
+      touch_file 'app/templates/partials/foo-bar/baz.hbs'
+      edit_file 'app/templates/example.hbs', <<-EOF
+        {{partial "partials/foo-bar/baz"}}
+      EOF
+      vim.search 'partial'
+
+      vim.normal 'gf'
+
+      expect(current_file).to eq 'app/templates/partials/foo-bar/baz.hbs'
+    end
+
     specify "finding a component" do
       touch_file 'app/components/foo/bar-baz/template.hbs'
       edit_file 'app/templates/example.hbs', <<-EOF

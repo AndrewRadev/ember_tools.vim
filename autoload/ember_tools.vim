@@ -44,6 +44,7 @@ function! ember_tools#Includeexpr()
         \ 'ember_tools#gf#Injection',
         \ 'ember_tools#gf#InjectedProperty',
         \ 'ember_tools#gf#Model',
+        \ 'ember_tools#gf#TemplatePartial',
         \ 'ember_tools#gf#TemplateComponent',
         \ 'ember_tools#gf#Import',
         \ ])
