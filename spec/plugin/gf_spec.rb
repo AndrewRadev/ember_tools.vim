@@ -270,6 +270,34 @@ describe "gf mapping" do
       expect(current_line.strip).to eq 'showSomething: true'
     end
 
+    specify "finding an explicit layoutName" do
+      touch_file 'app/templates/some/template/name.hbs'
+      edit_file 'app/controllers/example.js', <<-EOF
+        export default Ember.Controller.extend({
+          layoutName: 'some/template/name'
+        });
+      EOF
+      vim.search 'layoutName'
+
+      vim.normal 'gf'
+
+      expect(current_file).to eq 'app/templates/some/template/name.hbs'
+    end
+
+    specify "finding an explicit templateName" do
+      touch_file 'app/templates/some/template/name.hbs'
+      edit_file 'app/controllers/example.js', <<-EOF
+        export default Ember.Controller.extend({
+          templateName: 'some/template/name'
+        });
+      EOF
+      vim.search 'templateName'
+
+      vim.normal 'gf'
+
+      expect(current_file).to eq 'app/templates/some/template/name.hbs'
+    end
+
     describe "finding an injected service" do
       before :each do
         touch_file 'app/services/example-service.js'

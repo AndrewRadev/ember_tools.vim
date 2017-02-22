@@ -41,6 +41,7 @@ function! ember_tools#Includeexpr()
         \ 'ember_tools#gf#Controller',
         \ 'ember_tools#gf#Action',
         \ 'ember_tools#gf#Property',
+        \ 'ember_tools#gf#ExplicitTemplateName',
         \ 'ember_tools#gf#Injection',
         \ 'ember_tools#gf#InjectedProperty',
         \ 'ember_tools#gf#Model',
