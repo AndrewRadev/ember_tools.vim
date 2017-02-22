@@ -157,27 +157,30 @@ function! ember_tools#gf#Import()
     let package_json = {}
   endif
 
+  let real_path = ''
+
   if package_json != {} &&
         \ has_key(package_json, 'name') &&
         \ expand('<cfile>') =~ '^'.package_json.name.'/'
     " the import starts with the app name
-    let app_path = substitute(expand('<cfile>'), '^'.package_json.name.'/', 'app/', '')
-    let files = s:Glob(app_path.'.*')
-
-    if len(files) > 0
-      return files[0]
-    endif
-  endif
-
-  if current_file =~ '^.'
+    let real_path = substitute(expand('<cfile>'), '^'.package_json.name.'/', 'app/', '')
+  elseif current_file =~ '^.'
     exe 'cd '.current_file_dir
     let absolute_path = expand('<cfile>:p')
     cd -
-    let files = s:Glob(fnamemodify(absolute_path.'.*', ':.'))
+    let real_path = fnamemodify(absolute_path, ':.')
+  endif
 
-    if len(files) > 0
-      return files[0]
-    endif
+  if real_path == ''
+    return ''
+  endif
+
+  let files = s:Glob(real_path.'.*')
+  " add components in directories
+  call extend(files, s:Glob(real_path.'/component.js'))
+
+  if len(files) > 0
+    return files[0]
   endif
 
   return ''
