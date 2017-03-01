@@ -311,6 +311,20 @@ describe "gf mapping" do
       expect(current_file).to eq 'app/templates/some/template/name.hbs'
     end
 
+    specify "finding an explicit controllerName" do
+      touch_file 'app/controllers/some/example.js'
+      edit_file 'app/routes/example.js', <<-EOF
+        export default Ember.Route.extend({
+          controllerName: 'some/example'
+        });
+      EOF
+      vim.search 'controllerName'
+
+      vim.normal 'gf'
+
+      expect(current_file).to eq 'app/controllers/some/example.js'
+    end
+
     describe "finding an injected service" do
       before :each do
         touch_file 'app/services/example-service.js'

@@ -272,6 +272,18 @@ function! ember_tools#gf#ExplicitTemplateName()
   return ember_tools#ExistingTemplateFile('app/templates/'.expand('<cfile>'))
 endfunction
 
+function! ember_tools#gf#ExplicitControllerName()
+  if !ember_tools#IsLogicFiletype()
+    return ''
+  endif
+
+  if ember_tools#search#UnderCursor('controllerName:\s\+["'']\zs\f\+["'']') <= 0
+    return ''
+  endif
+
+  return ember_tools#ExistingLogicFile('app/controllers/'.expand('<cfile>'))
+endfunction
+
 function! s:FindInjection(property)
   let property = a:property
   let name = split(property, '\.')[0]
