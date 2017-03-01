@@ -35,7 +35,7 @@ function! ember_tools#gf#TransitionRoute()
     return ''
   endif
 
-  if !ember_tools#search#UnderCursor('transitionTo\%(Route\)\=[( ][''"]\zs\k\+[''"]')
+  if !ember_tools#search#UnderCursor('\%(this\.\|@\)transitionTo\%(Route\)\=[( ][''"]\zs\k\+[''"]')
     return ''
   endif
 
@@ -45,12 +45,24 @@ function! ember_tools#gf#TransitionRoute()
   return s:FindRoute(join(route_path, '/'))
 endfunction
 
+function! ember_tools#gf#RenderCall()
+  if !ember_tools#IsLogicFiletype()
+    return ''
+  endif
+
+  if !ember_tools#search#UnderCursor('\%(this\.\|@\)render[( ][''"]\zs\k\+[''"]')
+    return ''
+  endif
+
+  return ember_tools#ExistingTemplateFile('app/templates/'.expand('<cfile>'))
+endfunction
+
 function! ember_tools#gf#Controller()
   if !ember_tools#IsLogicFiletype()
     return ''
   endif
 
-  if !ember_tools#search#UnderCursor('controllerFor[( ][''"]\zs\k\+[''"]')
+  if !ember_tools#search#UnderCursor('\%(this\.\|@\)controllerFor[( ][''"]\zs\k\+[''"]')
     return ''
   endif
 
@@ -78,7 +90,7 @@ function! ember_tools#gf#InjectedProperty()
     return ''
   endif
 
-  if !ember_tools#search#UnderCursor('get[( ][''"]\zs\k\+[''"]')
+  if !ember_tools#search#UnderCursor('\%(this\.\|@\)get[( ][''"]\zs\k\+[''"]')
     return ''
   endif
 

@@ -283,6 +283,22 @@ describe "gf mapping" do
       expect(current_line.strip).to eq 'showSomething: true'
     end
 
+    specify "finding a template from its render call" do
+      touch_file 'app/templates/some/other/template.hbs'
+      edit_file 'app/controllers/foo.js', <<-EOF
+        export default Ember.Controller.extend({
+          renderTemplate() {
+            this.render('some/other/template');
+          }
+        });
+      EOF
+      vim.search 'this.render'
+
+      vim.normal 'gf'
+
+      expect(current_file).to eq 'app/templates/some/other/template.hbs'
+    end
+
     specify "finding an explicit layoutName" do
       touch_file 'app/templates/some/template/name.hbs'
       edit_file 'app/controllers/example.js', <<-EOF

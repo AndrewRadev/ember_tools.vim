@@ -160,12 +160,16 @@ it exists. The method calls that work this way are:
 - `belongsTo`
 - `hasMany`
 
-gf: Partials ~
+gf: Templates ~
 
 With a `partial` call in the template, you can |gf| directly to the referred
 template:
 >
     {{partial "partials/foo-bar/baz"}}
+<
+With a `render` call in a logic file, you can |gf| to the template as well:
+>
+    this.render('partials/foo-bar/baz');
 <
 gf: Imports ~
 

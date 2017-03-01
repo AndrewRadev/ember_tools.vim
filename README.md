@@ -120,8 +120,14 @@ A `gf` on the "user" in the `belongsTo` call will jump to the user model, if it 
 
 With a `partial` call in the template, you can `gf` directly to the referred template:
 
-``` javascript
+``` handlebars
 {{partial "partials/foo-bar/baz"}}
+```
+
+With a `render` call in a logic file, you can `gf` to the template as well:
+
+``` javascript
+this.render('partials/foo-bar/baz');
 ```
 
 #### gf: Imports
