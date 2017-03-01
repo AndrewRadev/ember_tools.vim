@@ -75,6 +75,12 @@ out where it's supposed to go. For example:
 Pressing |gf| on "bar-baz" will jump to "app/routes/foo/bar-baz.js", provided
 that file exists.
 
+You can also use it with `transitionTo` and `transitionToRoute` calls:
+>
+    beforeModel() {
+      this.transitionTo('foo.bar-baz');
+    }
+<
 gf: Components in templates ~
 
 Pressing |gf| on a component name in a template files will jump to that
@@ -101,7 +107,7 @@ having a file like this:
 Pressing |gf| while on "showTooltip" will jump to the current template's
 controller/component file and find the "showTooltip" action.
 
-gf: Services ~
+gf: Injection ~
 
 If you have a service defined in the file
 "app/services/cookie-settings.js", then you can jump to that file while
@@ -122,6 +128,21 @@ invoke the service with `this.get`, you can also |gf| there as well:
 A |gf| on "cookieSettings" in the `get` will also work, as long as there's an
 injection line in the file.
 
+The same thing works for injection of controllers:
+>
+    export default Ember.Controller.extend({
+      exampleController: Ember.inject.controller('example')
+    });
+<
+gf: Explicit entity name ~
+
+With an explicit `layoutName`, `templateName`, or `controllerName`, you can
+|gf| on the declaration to jump directly to it:
+>
+    export default Ember.Controller.extend({
+      layoutName: 'some/template/name'
+    });
+<
 gf: Models ~
 
 If you have a method call that is related to a model, then a |gf| on it will
@@ -139,17 +160,27 @@ it exists. The method calls that work this way are:
 - `belongsTo`
 - `hasMany`
 
+gf: Partials ~
+
+With a `partial` call in the template, you can |gf| directly to the referred
+template:
+>
+    {{partial "partials/foo-bar/baz"}}
+<
 gf: Imports ~
 
-If you have a relative import line, like this:
+If you have import lines, like this:
 >
     import Ember from 'ember';
     import ControllerCommonMixin from '../../mixins/controller-common';
+    import OtherMixin from 'app-name/mixins/other';
 
-    export default Ember.Controller.extend(ControllerCommonMixin)
+    export default Ember.Controller.extend(ControllerCommonMixin, OtherMixin)
 <
 Using |gf| on "../../mixins/controller-common" will send you to the right
-file, relative to the current one.
+file, relative to the current one. Using |gf| on "app-name/mixins/other" will
+also send you to the right file, provided there's a `package.json` file in the
+app root that defines the app name.
 
 
                                                           *ember_tools-:Extract*

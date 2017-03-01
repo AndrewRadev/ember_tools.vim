@@ -28,6 +28,14 @@ Router.map(function() {
 
 Pressing `gf` on "bar-baz" will jump to "app/routes/foo/bar-baz.js", provided that file exists.
 
+You can also use it with `transitionTo` and `transitionToRoute` calls:
+
+``` javascript
+beforeModel() {
+  this.transitionTo('foo.bar-baz');
+}
+```
+
 #### gf: Components in templates
 
 Pressing `gf` on a component name in a template files will jump to that component's template. For example:
@@ -52,7 +60,7 @@ Pressing `gf` on an action name in a template files will jump to the current tem
 
 Pressing `gf` while on "showTooltip" will jump to the current template's controller/component file and find the "showTooltip" action.
 
-#### gf: Services
+#### gf: Injection
 
 If you have a service defined in the file "app/services/cookie-settings.js", then you can jump to that file while hitting `gf` on the point of injection of the service:
 
@@ -73,6 +81,24 @@ this.get('cookieSettings.someProperty');
 
 A `gf` on "cookieSettings" in the `get` will also work, as long as there's an injection line in the file.
 
+The same thing works for injection of controllers:
+
+``` javascript
+export default Ember.Controller.extend({
+  exampleController: Ember.inject.controller('example')
+});
+```
+
+#### gf: Explicit entity name
+
+With an explicit `layoutName`, `templateName`, or `controllerName`, you can `gf` on the declaration to jump directly to it:
+
+``` javascript
+export default Ember.Controller.extend({
+  layoutName: 'some/template/name'
+});
+```
+
 #### gf: Models
 
 If you have a method call that is related to a model, then a `gf` on it will jump to that model. For instance,
@@ -90,18 +116,27 @@ A `gf` on the "user" in the `belongsTo` call will jump to the user model, if it 
 - `belongsTo`
 - `hasMany`
 
+#### gf: Partials
+
+With a `partial` call in the template, you can `gf` directly to the referred template:
+
+``` javascript
+{{partial "partials/foo-bar/baz"}}
+```
+
 #### gf: Imports
 
-If you have a relative import line, like this:
+If you have import lines, like this:
 
 ``` javascript
 import Ember from 'ember';
 import ControllerCommonMixin from '../../mixins/controller-common';
+import OtherMixin from 'app-name/mixins/other';
 
-export default Ember.Controller.extend(ControllerCommonMixin)
+export default Ember.Controller.extend(ControllerCommonMixin, OtherMixin)
 ```
 
-Using `gf` on "../../mixins/controller-common" will send you to the right file, relative to the current one.
+Using `gf` on "../../mixins/controller-common" will send you to the right file, relative to the current one. Using `gf` on "app-name/mixins/other" will also send you to the right file, provided there's a `package.json` file in the app root that defines the app name.
 
 ### :Extract
 
@@ -249,7 +284,6 @@ The current directory for the duration of the callback will be the ember root. A
 An example of what you could potentially do can be found in this gist: https://gist.github.com/AndrewRadev/c62132f96deca165b8969eba7bc1dc13
 
 There's quite a few project-specific things, which is why it's not a general-purpose callback. There's also a few invocations of the plugin's public API, which, unfortunately, you would have to read the source code to understand.
-
 
 ``` vim
 let g:ember_tools_extract_behaviour = 'component-dir'
