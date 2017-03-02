@@ -28,19 +28,6 @@ describe "gf mapping" do
       expect(current_file).to eq 'app/stuff.js'
     end
 
-    specify "finding a pod-style component import" do
-      write_file 'package.json', JSON.dump({'name' => 'appname'})
-      touch_file 'app/components/stuff/component.js'
-      edit_file 'app/foo/bar/baz.js', <<-EOF
-        import stuff from 'appname/components/stuff';
-      EOF
-      vim.search 'stuff\''
-
-      vim.normal 'gf'
-
-      expect(current_file).to eq 'app/components/stuff/component.js'
-    end
-
     specify "finding a route from the router" do
       touch_file 'app/routes/foo/bar-baz.js'
       edit_file 'app/router.js', <<-EOF

@@ -188,8 +188,6 @@ function! ember_tools#gf#Import()
   endif
 
   let files = s:Glob(real_path.'.*')
-  " add components in directories
-  call extend(files, s:Glob(real_path.'/component.js'))
 
   if len(files) > 0
     return files[0]
