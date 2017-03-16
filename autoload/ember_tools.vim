@@ -19,7 +19,8 @@ function! ember_tools#Init()
   setlocal includeexpr=ember_tools#Includeexpr()
 
   if ember_tools#IsTemplateFiletype()
-    command! -count=0 -nargs=1 -buffer Extract call ember_tools#extract#Run(<line1>, <line2>, <f-args>)
+    command! -count=0 -nargs=1 -buffer
+          \ Extract call ember_tools#extract#Run(<line1>, <line2>, <f-args>)
   endif
 
   if &filetype is 'javascript'
@@ -156,15 +157,52 @@ function! ember_tools#LogicExtension()
 endfunction
 
 function! ember_tools#ExistingTemplateFile(file_prefix)
-  let file_prefix = a:file_prefix
-  if ember_tools#util#Filereadable(file_prefix.'.emblem') | return file_prefix.'.emblem' | endif
-  if ember_tools#util#Filereadable(file_prefix.'.hbs')    | return file_prefix.'.hbs'    | endif
+  for file_prefix in s:EnumerateBasenameFormats(a:file_prefix)
+    if ember_tools#util#Filereadable(file_prefix.'.hbs')    | return file_prefix.'.hbs'    | endif
+    if ember_tools#util#Filereadable(file_prefix.'.emblem') | return file_prefix.'.emblem' | endif
+  endfor
+
   return ''
 endfunction
 
 function! ember_tools#ExistingLogicFile(file_prefix)
-  let file_prefix = a:file_prefix
-  if ember_tools#util#Filereadable(file_prefix.'.coffee') | return file_prefix.'.coffee' | endif
-  if ember_tools#util#Filereadable(file_prefix.'.js')     | return file_prefix.'.js'     | endif
+  for file_prefix in s:EnumerateBasenameFormats(a:file_prefix)
+    if ember_tools#util#Filereadable(file_prefix.'.js')     | return file_prefix.'.js'     | endif
+    if ember_tools#util#Filereadable(file_prefix.'.coffee') | return file_prefix.'.coffee' | endif
+  endfor
+
   return ''
+endfunction
+
+function! s:EnumerateBasenameFormats(filename)
+  if a:filename !~ '/'
+    let path = ''
+    let basename = a:filename
+  else
+    let [path, basename] = split(a:filename, '^.*\zs/\ze.*$')
+    let path .= '/'
+  endif
+
+  if basename =~ '_'
+    " it's underscored:
+    let underscored = basename
+    let camelcased = ember_tools#util#CamelCase(basename)
+    let dasherized = ember_tools#util#Dasherize(camelcased)
+  elseif basename =~ '-'
+    let dasherized = basename
+    let underscored = substitute(basename, '-', '_', 'g')
+    let camelcased = ember_tools#util#CamelCase(underscored)
+  elseif basename =~# '\u'
+    let camelcased = basename
+    let underscored = ember_tools#util#Underscore(camelcased)
+    let dasherized = ember_tools#util#Dasherize(camelcased)
+  else
+    " doesn't look like anything special, just use that one
+    return [a:filename]
+  endif
+
+  return [
+        \ path.dasherized, path.underscored, path.camelcased,
+        \ path.'-'.dasherized, path.'_'.underscored,
+        \ ]
 endfunction
