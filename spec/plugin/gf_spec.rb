@@ -172,6 +172,20 @@ describe "gf mapping" do
       expect(current_file).to eq 'app/pods/foo/bar-baz/template.hbs'
     end
 
+    specify "finding a component without a template file within a pod structure" do
+      touch_file 'app/pods/foo/bar-baz/component.js'
+      edit_file 'app/templates/example.hbs', <<-EOF
+        <p>
+          {{foo/bar-baz param1=something}}
+        </p>
+      EOF
+      vim.search 'foo/bar-baz'
+
+      vim.normal 'gf'
+
+      expect(current_file).to eq 'app/pods/foo/bar-baz/component.js'
+    end
+
     specify "finding a component with block expression" do
       touch_file 'app/components/foo/bar-baz/template.hbs'
       edit_file 'app/templates/example.hbs', <<-EOF

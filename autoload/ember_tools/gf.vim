@@ -327,10 +327,10 @@ function! s:FindComponentLogic(component_name)
   let existing_file = ember_tools#ExistingLogicFile('app/components/'.a:component_name.'/component')
   if existing_file != '' | return existing_file | endif
 
-  let existing_file = ember_tools#ExistingTemplateFile('app/pods/'.a:component_name.'/component')
+  let existing_file = ember_tools#ExistingLogicFile('app/pods/'.a:component_name.'/component')
   if existing_file != '' | return existing_file | endif
 
-  let existing_file = ember_tools#ExistingTemplateFile('app/pods/components/'.a:component_name.'/component')
+  let existing_file = ember_tools#ExistingLogicFile('app/pods/components/'.a:component_name.'/component')
   if existing_file != '' | return existing_file | endif
 
   return ''
