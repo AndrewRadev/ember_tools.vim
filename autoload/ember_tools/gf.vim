@@ -77,7 +77,7 @@ function! ember_tools#gf#Injection()
     return ''
   endif
 
-  if !ember_tools#search#UnderCursor('^\s*\zs\k\+:\s*\%(Ember\.\)\=inject\.')
+  if !ember_tools#search#UnderCursor('^\s*\k\+:\s*\%(Ember\.\)\=\%(inject\.\)\=\(service\|controller\)(')
     return ''
   endif
 
