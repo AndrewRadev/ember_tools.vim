@@ -142,7 +142,7 @@ import OtherMixin from 'app-name/mixins/other';
 export default Ember.Controller.extend(ControllerCommonMixin, OtherMixin)
 ```
 
-Using `gf` on "../../mixins/controller-common" will send you to the right file, relative to the current one. Using `gf` on "app-name/mixins/other" will also send you to the right file, provided there's a `package.json` file in the app root that defines the app name.
+Using `gf` on "../../mixins/controller-common" will send you to the right file, relative to the current one. Using `gf` on "app-name/mixins/other" will also send you to the right file, provided there's a `package.json` file in the app root that defines the app name and that Vim has the `json_decode` function (available for version 8 and some late patchlevels of 7.4).
 
 ### :Extract
 
