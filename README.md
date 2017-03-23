@@ -260,6 +260,26 @@ export default Controller.extend({
 
 For now, this is simply a reversal of the `:Unpack` command. In the future, the `:Inline` command might also inline other kinds of constructs, like local variables or properties.
 
+### Syntax highlighting
+
+The plugin attempts to highlight actions in javascript files in a special way. Any function definition that's in an `action: { }` block would get the special syntax group `emberAction`. By default, this underlines the action. So, in this example:
+
+![Actions highlighting demo](http://i.andrewradev.com/ac90f7477a110deb7e96bac43b228cc9.png)
+
+As you can see, both "someAction" and "anotherAction" are underscored to help see that they're actions, and not just methods.
+
+To disable this behaviour, you'd need to set `g:ember_tools_highlight_actions` to 0.
+
+To control when the syntax highlighting is recomputed, change the `g:ember_tools_highlight_actions_on` setting. See the documentation below for the possible values.
+
+If you want to customize the highlighting, define the highlight group `emberAction` to whatever you like. As an example:
+
+``` vim
+highlight emberAction ctermfg=red gui=red
+```
+
+This will highlight actions in red in both color terminals and the gui.
+
 ## Settings
 
 ``` vim
@@ -307,6 +327,34 @@ This setting controls the behaviour of `:Extract` regarding what kind of files t
     - Template file: `app/components/<component-name>/template.hbs`
 
 The file extensions might not be "js" and "hbs", depending on what the current filetype is and what other settings are set to.
+
+
+``` vim
+let g:ember_tools_highlight_actions = 0
+```
+
+Default value: 1
+
+When set to 1 (the default), the plugin will attempt to highlight function definitions in `actions: { }` blocks with the `emberAction` highlight group (that you can customize however you like). Set to 0 to disable this behaviour completely.
+
+
+``` vim
+let g:ember_tools_highlight_actions_on = ['init', 'write']
+```
+
+Default value: `["init", "insert-leave", "normal-text-changed"]`
+
+This setting controls when the plugin will try to highlight ember actions. Unfortunately, I haven't found a way to plug this feature into the built-in syntax highlighting mechanism, so updating requires a manual search through the buffer for the right area. (If you have an idea how you can do this, a pull request, or even an issue with a suggestion would be very welcome).
+
+What this means in practice is that the plugin needs to decide when to try to update the limits of the area. The setting is a list with all events that trigger the process. The available events are:
+
+- `init`: When the buffer is initially loaded. You probably want this.
+- `write`: When the buffer is written to disk.
+- `insert-leave`: When you leave insert mode.
+- `normal-text-changed`: When you change text in normal mode, for instance, when pasting or using |r| to replace.
+- `cursor-hold`: When you don't move the cursor for `timeoutlen` milliseconds.
+
+As an example, setting the value to `["init", "write", "cursor-hold"]` would only update the highlighting when writing and not moving the cursor, which might be more efficient than the default. (The default is not slow at all on my machine, but, as with everything, your mileage may vary).
 
 ## Contributing
 

@@ -23,6 +23,18 @@ if !exists('g:ember_tools_extract_behaviour')
   let g:ember_tools_extract_behaviour = 'separate-template'
 endif
 
+if !exists('g:ember_tools_highlight_actions')
+  let g:ember_tools_highlight_actions = 1
+endif
+
+if !exists('g:ember_tools_highlight_actions_on')
+  "
+  " possible values: "init", "write", "insert-leave",
+  "                  "normal-text-changed",  "cursor-hold"
+  "
+  let g:ember_tools_highlight_actions_on = ['init', 'insert-leave', 'normal-text-changed']
+endif
+
 augroup ember_tools
   autocmd!
 
