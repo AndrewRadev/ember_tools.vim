@@ -24,8 +24,13 @@ function! ember_tools#Init()
   endif
 
   if &filetype is 'javascript'
-    command! -buffer Unpack call ember_tools#unpack#Run()
-    command! -buffer Inline call ember_tools#unpack#Reverse()
+    command! -buffer
+          \ Unpack call ember_tools#unpack#Run()
+    command! -buffer
+          \ Inline call ember_tools#unpack#Reverse()
+    command! -buffer -nargs=* -complete=custom,s:CompleteServices
+          \ Inject call ember_tools#inject#Run(<f-args>)
+
     call s:DefineJavascriptAutocommands()
   end
 endfunction
@@ -243,4 +248,12 @@ function! s:EnumerateBasenameFormats(filename)
         \ path.dasherized, path.underscored, path.camelcased,
         \ path.'-'.dasherized, path.'_'.underscored,
         \ ]
+endfunction
+
+function! s:CompleteServices(argument_lead, command_line, cursor_position)
+  let files     = glob(b:ember_root.'/app/services/**/*.js', 0, 1)
+  let basenames = map(files, 'substitute(v:val, b:ember_root."/app/services/", "", "")')
+  let names     = map(basenames, 'substitute(v:val, ".js$", "", "")')
+
+  return join(sort(names), "\n")
 endfunction
