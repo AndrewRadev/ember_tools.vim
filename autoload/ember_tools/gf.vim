@@ -294,6 +294,23 @@ function! ember_tools#gf#ExplicitControllerName()
   return ember_tools#ExistingLogicFile('app/controllers/'.expand('<cfile>'))
 endfunction
 
+function! ember_tools#gf#ImportedVariable()
+  if !ember_tools#IsLogicFiletype()
+    return ''
+  endif
+
+  " Find a real word this time
+  set iskeyword-=.,-,/
+  let cword = expand('<cword>')
+  set iskeyword+=.,-,/
+
+  if search('^import\_s*'.cword.'\_s*from\_s*[''"]\zs\f\+[''"]', 'c') <= 0
+    return ''
+  endif
+
+  return ember_tools#gf#Import()
+endfunction
+
 function! s:FindInjection(property)
   let property = a:property
   let name = split(property, '\.')[0]

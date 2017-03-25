@@ -30,6 +30,20 @@ describe "gf mapping" do
       expect(current_file).to eq 'app/stuff.js'
     end
 
+    specify "following an imported variable's source" do
+      touch_file 'app/stuff.js'
+      edit_file 'app/foo/bar/baz.js', <<-EOF
+        import Whatever from '../../stuff';
+
+        export default Whatever.extend({});
+      EOF
+      vim.search 'export default \zsWhatever'
+
+      vim.normal 'gf'
+
+      expect(current_file).to eq 'app/stuff.js'
+    end
+
     specify "finding a route from the router" do
       touch_file 'app/routes/foo/bar-baz.js'
       edit_file 'app/router.js', <<-EOF

@@ -187,6 +187,10 @@ also send you to the right file, provided there's a `package.json` file in the
 app root that defines the app name and that Vim has the |json_decode()|
 function (available for version 8 and some late patchlevels of 7.4).
 
+You can also follow imported variables. If you |gf| on the
+"ControllerCommonMixin" in the "export default" line, the plugin will check
+that's it's an imported variable, and follow the import.
+
 
                                                           *ember_tools-:Extract*
 :Extract ~
