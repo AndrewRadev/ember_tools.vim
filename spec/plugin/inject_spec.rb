@@ -1,6 +1,11 @@
 require 'spec_helper'
 
 describe ":Inject" do
+  before :each do
+    vim.set 'expandtab'
+    vim.set 'shiftwidth', 2
+  end
+
   specify "creates a new injection in an empty Ember object" do
     touch_file 'app/services/some-service.js'
     edit_file 'test.js', <<-EOF
