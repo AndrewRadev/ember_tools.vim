@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe ":Inject" do
-  before :each do
+  def adjust_indent_settings
     vim.set 'expandtab'
     vim.set 'shiftwidth', 2
   end
@@ -11,6 +11,7 @@ describe ":Inject" do
     edit_file 'test.js', <<-EOF
       export default Ember.Object.extend({});
     EOF
+    adjust_indent_settings
 
     vim.command 'Inject some-service'
     vim.write
@@ -30,6 +31,7 @@ describe ":Inject" do
         foo: "bar",
       });
     EOF
+    adjust_indent_settings
 
     vim.command 'Inject some-service'
     vim.write
@@ -54,6 +56,7 @@ describe ":Inject" do
         bar: "baz",
       });
     EOF
+    adjust_indent_settings
 
     vim.command 'Inject some-service'
     vim.write
@@ -77,6 +80,7 @@ describe ":Inject" do
         foo: "bar",
       });
     EOF
+    adjust_indent_settings
 
     vim.command 'Inject some-service'
     vim.write
@@ -99,6 +103,7 @@ describe ":Inject" do
         }
       });
     EOF
+    adjust_indent_settings
 
     vim.search('get(\'someService')
     vim.command 'Inject'
