@@ -260,6 +260,32 @@ export default Controller.extend({
 
 For now, this is simply a reversal of the `:Unpack` command. In the future, the `:Inline` command might also inline other kinds of constructs, like local variables or properties.
 
+### Inject
+
+The `:Inject` command provides an easy way to inject services in your Ember objects. Calling `:Inject <some-service>` will add a line with the service injection. If you don't provide an argument, the plugin will look under the cursor for a `get('<service-name>')`:
+
+``` javascript
+export default Ember.Object({
+  init() {
+    this.get('someService').someMethod();
+  },
+});
+```
+
+With the cursor on `someService`, running `:Inject` will add the injection to the code:
+
+``` javascript
+export default Ember.Object({
+  someService: Ember.inject.service(),
+
+  init() {
+    this.get('someService').someMethod();
+  },
+});
+```
+
+When calling `:Inject` with an argument, it tab-completes all available services. If an injection is already present, the plugin simply notifies you. The cursor is kept where it was, so the injection might be offscreen -- you'll be notified it was successful.
+
 ### Syntax highlighting
 
 The plugin attempts to highlight actions in javascript files in a special way. Any function definition that's in an `action: { }` block would get the special syntax group `emberAction`. By default, this underlines the action. So, in this example:
