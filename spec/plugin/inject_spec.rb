@@ -44,6 +44,8 @@ describe ":Inject" do
   end
 
   specify "creates a new injection after other injections" do
+    pending "Doesn't work on TravisCI due to old Vim version"
+
     touch_file 'app/services/some-service.js'
     edit_file 'test.js', <<-EOF
       export default Ember.Object.extend({
