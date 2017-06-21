@@ -42,7 +42,10 @@ augroup ember_tools
         \ call ember_tools#Init()
 
   " Override gf if rails sets it after us
-  autocmd User Rails cmap <buffer><expr> <Plug><cfile> ember_tools#Includeexpr()
+  autocmd User Rails
+        \ if exists('b:ember_root') |
+        \   exe 'cmap <buffer><expr> <Plug><cfile> ember_tools#Includeexpr()' |
+        \ endif
 augroup END
 
 let &cpo = s:keepcpo
