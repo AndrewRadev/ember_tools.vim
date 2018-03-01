@@ -382,6 +382,8 @@ What this means in practice is that the plugin needs to decide when to try to up
 
 As an example, setting the value to `["init", "write", "cursor-hold"]` would only update the highlighting when writing and not moving the cursor, which might be more efficient than the default. (The default is not slow at all on my machine, but, as with everything, your mileage may vary).
 
+Note that the "normal-text-changed" setting will only work if your Vim has the `TextChanged` autocommand.
+
 ## Contributing
 
 Pull requests are welcome, but take a look at [CONTRIBUTING.md](https://github.com/AndrewRadev/ember_tools.vim/blob/master/CONTRIBUTING.md) first for some guidelines.

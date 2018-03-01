@@ -204,9 +204,11 @@ function! s:DefineJavascriptAutocommands()
         autocmd InsertLeave <buffer> call ember_tools#syntax#MarkPrivateArea()
       endif
 
-      if index(g:ember_tools_highlight_actions_on, 'normal-text-changed') >= 0
-        " Mark when text has changed in normal mode
-        autocmd TextChanged <buffer> call ember_tools#syntax#MarkPrivateArea()
+      if exists('#TextChanged')
+        if index(g:ember_tools_highlight_actions_on, 'normal-text-changed') >= 0
+          " Mark when text has changed in normal mode
+          autocmd TextChanged <buffer> call ember_tools#syntax#MarkPrivateArea()
+        endif
       endif
 
       if index(g:ember_tools_highlight_actions_on, 'cursor-hold') >= 0

@@ -505,6 +505,8 @@ only update the highlighting when writing and not moving the cursor, which
 might be more efficient than the default. (The default is not slow at all on
 my machine, but, as with everything, your mileage may vary).
 
+Note that the "normal-text-changed" setting will only work if your Vim has the
+|TextChanged| autocommand.
 
 ==============================================================================
 INTERNALS                                                *ember_tools-internals*
