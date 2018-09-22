@@ -262,6 +262,29 @@ describe "gf mapping" do
       expect(current_line.strip).to eq 'exampleAction() {'
     end
 
+    specify "finding a local component action" do
+      edit_file 'anywhere/component.js', <<-EOF
+        export default Ember.Component.extend({
+          actions: {
+            exampleAction() {
+              # example
+            }
+          }
+        });
+      EOF
+      edit_file 'anywhere/template.hbs', <<-EOF
+        <p>
+          {{foo/bar-baz param1=(action 'exampleAction')}}
+        </p>
+      EOF
+      vim.search 'exampleAction'
+
+      vim.normal 'gf'
+
+      expect(current_file).to eq 'anywhere/component.js'
+      expect(current_line.strip).to eq 'exampleAction() {'
+    end
+
     specify "finding a controller property" do
       edit_file 'app/controllers/foo.js', <<-EOF
         export default Ember.Controller.extend({

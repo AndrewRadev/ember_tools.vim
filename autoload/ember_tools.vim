@@ -222,11 +222,20 @@ function! s:DefineJavascriptAutocommands()
 endfunction
 
 function! s:EnumerateBasenameFormats(filename)
-  if a:filename !~ '/'
+  let filename = a:filename
+
+  if strpart(filename, 0, 2) == './'
+    " then relativize based on current file
+    let parent_dir = expand('%:p:h')
+    let filename = parent_dir . '/' . strpart(filename, 2)
+    let filename = fnamemodify(filename, ':.')
+  endif
+
+  if filename !~ '/'
     let path = ''
-    let basename = a:filename
+    let basename = filename
   else
-    let [path, basename] = split(a:filename, '^.*\zs/\ze.*$')
+    let [path, basename] = split(filename, '^.*\zs/\ze.*$')
     let path .= '/'
   endif
 
@@ -245,7 +254,7 @@ function! s:EnumerateBasenameFormats(filename)
     let dasherized = ember_tools#util#Dasherize(camelcased)
   else
     " doesn't look like anything special, just use that one
-    return [a:filename]
+    return [filename]
   endif
 
   return [

@@ -219,7 +219,12 @@ function! ember_tools#gf#Action()
   endif
 
   if result == ''
-    echomsg "Can't find action: ".action_name
+    " try finding files next to this one
+    let result = s:FindLocalActionContainer()
+  endif
+
+  if result == ''
+    call ember_tools#util#Debug("[gf] Can't find action: ".action_name)
     return ''
   else
     call ember_tools#SetFileOpenCallback(result, 'actions:', '^\s*\zs'.action_name.'\%(:\|(\)')
@@ -374,6 +379,19 @@ function! s:FindController(name)
   if existing_file != '' | return existing_file | endif
 
   let existing_file = ember_tools#ExistingLogicFile('app/pods/'.a:name.'/controller')
+  if existing_file != '' | return existing_file | endif
+
+  return ''
+endfunction
+
+function! s:FindLocalActionContainer()
+  let existing_file = ember_tools#ExistingLogicFile('./component')
+  if existing_file != '' | return existing_file | endif
+
+  let existing_file = ember_tools#ExistingLogicFile('./controller')
+  if existing_file != '' | return existing_file | endif
+
+  let existing_file = ember_tools#ExistingLogicFile('./route')
   if existing_file != '' | return existing_file | endif
 
   return ''
