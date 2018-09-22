@@ -44,7 +44,7 @@ describe ":Inject" do
   end
 
   specify "creates a new injection after other injections" do
-    pending "Doesn't work on TravisCI due to old Vim version"
+    pending "Doesn't seem to work on TravisCI for some reason" if ENV['TRAVIS_CI']
 
     touch_file 'app/services/some-service.js'
     edit_file 'test.js', <<-EOF
