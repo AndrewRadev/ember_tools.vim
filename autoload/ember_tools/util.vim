@@ -45,8 +45,13 @@ endfunction
 
 " Wrap the native filereadable() function to provide some debug logging.
 function! ember_tools#util#Filereadable(filename)
-  if exists('g:ember_tools_debug')
-    echomsg "Checking existence of file: ".a:filename
-  endif
+  call ember_tools#util#Debug(" Checking existence of file: ".a:filename)
   return filereadable(a:filename)
+endfunction
+
+function! ember_tools#util#Debug(message)
+  if exists('g:ember_tools_debug') && g:ember_tools_debug
+    let message = '[ember_tools]'.a:message
+    echomsg message
+  endif
 endfunction

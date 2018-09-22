@@ -66,12 +66,14 @@ function! ember_tools#Includeexpr()
 
   for callback in callbacks
     try
+      call ember_tools#util#Debug("[gf] Trying callback: ".callback)
       exe 'cd '.b:ember_root
       set iskeyword+=.,-,/
       call ember_tools#cursors#Push()
 
       let path = call(callback, [])
       if path != ''
+        call ember_tools#util#Debug("[gf] Found file: ".path)
         let found_file = path
       endif
     finally
