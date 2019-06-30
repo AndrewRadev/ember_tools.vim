@@ -19,7 +19,7 @@ function! ember_tools#Init()
   setlocal includeexpr=ember_tools#Includeexpr()
 
   if ember_tools#IsTemplateFiletype()
-    command! -count=0 -nargs=1 -buffer
+    command! -range=0 -nargs=1 -buffer
           \ Extract call ember_tools#extract#Run(<line1>, <line2>, <f-args>)
   endif
 
