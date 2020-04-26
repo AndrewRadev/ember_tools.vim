@@ -17,12 +17,6 @@ function! ember_tools#util#CamelCase(word)
   return substitute(a:word, '_\(.\)', '\U\1', 'g')
 endfunction
 
-" CamelCase and Capitalize
-" foo_bar_baz -> FooBarBaz
-function! ember_tools#util#CapitalCamelCase(word)
-  return ember_tools#util#Capitalize(ember_tools#util#CamelCase(a:word))
-endfunction
-
 " Underscore CamelCased word:
 " FooBarBaz -> foo_bar_baz
 function! ember_tools#util#Underscore(word)
