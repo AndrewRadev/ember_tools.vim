@@ -120,6 +120,36 @@ function! ember_tools#gf#Model()
   return ember_tools#ExistingLogicFile('app/models/'.dasherized_name)
 endfunction
 
+function! ember_tools#gf#AngleBracketTemplateComponent()
+  if !ember_tools#IsTemplateFiletype()
+    return ''
+  endif
+
+  if !ember_tools#search#UnderCursor('^\s*\%(=\|<\|<\/\)\{}\s*\zs\k\+')
+    return ''
+  endif
+
+  set iskeyword+=:
+  set iskeyword-=/
+  let angle_bracketed_component_name = expand('<cword>')
+  set iskeyword-=:
+  set iskeyword+=/
+
+  let component_parts = split(angle_bracketed_component_name, '::')
+  let component_name = join(map(component_parts, 'ember_tools#util#Dasherize(v:val)'), '/')
+
+  let component_file = s:FindComponentTemplate(component_name)
+  if component_file == ''
+    let component_file = s:FindComponentLogic(component_name)
+  endif
+  if component_file == ''
+    echomsg "Can't find component: ".component_name
+    return ''
+  endif
+
+  return component_file
+endfunction
+
 function! ember_tools#gf#TemplateComponent()
   if !ember_tools#IsTemplateFiletype()
     return ''

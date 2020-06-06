@@ -158,7 +158,37 @@ describe "gf mapping" do
       expect(current_file).to eq 'app/components/foo/bar-baz/template.hbs'
     end
 
-    specify "finding a component without a template file" do
+    specify "finding a component instantiated via angle bracket notation" do
+      touch_file 'app/components/foo/bar-baz/fizz/template.hbs'
+      edit_file 'app/templates/example.hbs', <<-EOF
+      <p>
+          <Foo::BarBaz::Fizz @param1={{something}} />
+        </p>
+      EOF
+      vim.search 'Foo::BarBaz::Fizz'
+
+      vim.normal 'gf'
+
+      expect(current_file).to eq 'app/components/foo/bar-baz/fizz/template.hbs'
+    end
+
+    specify "finding a component instantiated via angle bracket notation in the closing tag" do
+      touch_file 'app/components/foo/bar-baz/fizz/template.hbs'
+      edit_file 'app/templates/example.hbs', <<-EOF
+      <p>
+          <Foo::BarBaz::Fizz @param1={{something}} >
+            {{biz}}
+          </Foo::BarBaz::Fizz>
+        </p>
+      EOF
+      vim.search '\/Foo::BarBaz::Fizz'
+
+      vim.normal 'gf'
+
+      expect(current_file).to eq 'app/components/foo/bar-baz/fizz/template.hbs'
+    end
+
+    specify 'finding a component without a template file' do
       touch_file 'app/components/foo/bar-baz/component.js'
       edit_file 'app/templates/example.hbs', <<-EOF
         <p>
