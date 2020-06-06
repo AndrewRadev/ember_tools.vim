@@ -120,6 +120,19 @@ function! ember_tools#gf#Model()
   return ember_tools#ExistingLogicFile('app/models/'.dasherized_name)
 endfunction
 
+"Should be a 'dasherized' name: `foo-bar/bazz`
+function! ember_tools#gf#FindComponent(component_name)
+  let component_file = s:FindComponentTemplate(a:component_name)
+  if component_file == ''
+    let component_file = s:FindComponentLogic(a:component_name)
+  endif
+  if component_file == ''
+    echomsg "Can't find component: ".a:component_name
+    return ''
+  endif
+  return component_file
+endfunction
+
 function! ember_tools#gf#AngleBracketTemplateComponent()
   if !ember_tools#IsTemplateFiletype()
     return ''
@@ -138,16 +151,7 @@ function! ember_tools#gf#AngleBracketTemplateComponent()
   let component_parts = split(angle_bracketed_component_name, '::')
   let component_name = join(map(component_parts, 'ember_tools#util#Dasherize(v:val)'), '/')
 
-  let component_file = s:FindComponentTemplate(component_name)
-  if component_file == ''
-    let component_file = s:FindComponentLogic(component_name)
-  endif
-  if component_file == ''
-    echomsg "Can't find component: ".component_name
-    return ''
-  endif
-
-  return component_file
+  return ember_tools#gf#FindComponent(component_name)
 endfunction
 
 function! ember_tools#gf#TemplateComponent()
@@ -160,16 +164,7 @@ function! ember_tools#gf#TemplateComponent()
   endif
 
   let component_name = expand('<cword>')
-  let component_file = s:FindComponentTemplate(component_name)
-  if component_file == ''
-    let component_file = s:FindComponentLogic(component_name)
-  endif
-  if component_file == ''
-    echomsg "Can't find component: ".component_name
-    return ''
-  endif
-
-  return component_file
+  return ember_tools#gf#FindComponent(component_name)
 endfunction
 
 function! ember_tools#gf#TemplatePartial()
