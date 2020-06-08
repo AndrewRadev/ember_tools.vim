@@ -120,6 +120,33 @@ function! ember_tools#gf#Model()
   return ember_tools#ExistingLogicFile('app/models/'.dasherized_name)
 endfunction
 
+function! ember_tools#gf#AngleBracketTemplateComponent()
+  if !ember_tools#IsTemplateFiletype()
+    return ''
+  endif
+
+  if !ember_tools#search#UnderCursor('^\s*\%(=\|<\|<\/\)\{}\s*\zs\k\+')
+    return ''
+  endif
+
+  try
+    let dasherized_component_file = ''
+    let saved_iskeyword = &iskeyword
+    set iskeyword+=:
+    set iskeyword-=/
+
+    let angle_bracketed_component_name = expand('<cword>')
+    let component_parts = split(angle_bracketed_component_name, '::')
+    let dasherized_component_name = join(map(component_parts, 'ember_tools#util#Dasherize(v:val)'), '/')
+    let dasherized_component_file = s:FindDasherizedComponent(dasherized_component_name)
+  catch
+    call ember_tools#util#Debug("[gf] Error while deriving angle-bracketed template " . v:exception)
+  finally
+    let &iskeyword = saved_iskeyword
+    return dasherized_component_file
+  endtry
+endfunction
+
 function! ember_tools#gf#TemplateComponent()
   if !ember_tools#IsTemplateFiletype()
     return ''
@@ -130,16 +157,7 @@ function! ember_tools#gf#TemplateComponent()
   endif
 
   let component_name = expand('<cword>')
-  let component_file = s:FindComponentTemplate(component_name)
-  if component_file == ''
-    let component_file = s:FindComponentLogic(component_name)
-  endif
-  if component_file == ''
-    echomsg "Can't find component: ".component_name
-    return ''
-  endif
-
-  return component_file
+  return s:FindDasherizedComponent(component_name)
 endfunction
 
 function! ember_tools#gf#TemplatePartial()
@@ -340,6 +358,18 @@ function! s:FindInjection(property)
   endif
 
   return ember_tools#ExistingLogicFile('app/'.injection_type.'s/'.entity_name)
+endfunction
+
+function! s:FindDasherizedComponent(component_name)
+  let component_file = s:FindComponentTemplate(a:component_name)
+  if component_file == ''
+    let component_file = s:FindComponentLogic(a:component_name)
+  endif
+  if component_file == ''
+    echomsg "Can't find component: ".a:component_name
+    return ''
+  endif
+  return component_file
 endfunction
 
 function! s:FindComponentLogic(component_name)
