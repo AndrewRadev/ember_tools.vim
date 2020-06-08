@@ -323,9 +323,13 @@ function! ember_tools#gf#ImportedVariable()
   endif
 
   " Find a real word this time
-  set iskeyword-=.,-,/
-  let cword = expand('<cword>')
-  set iskeyword+=.,-,/
+  try
+    let saved_iskeyword = &iskeyword
+    set iskeyword-=.,-,/
+    let cword = expand('<cword>')
+  finally
+    let &iskeyword = saved_iskeyword
+  endtry
 
   if search('^import\_s*'.cword.'\_s*from\_s*[''"]\zs\f\+[''"]', 'c') <= 0
     return ''
