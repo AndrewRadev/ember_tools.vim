@@ -360,6 +360,18 @@ function! s:FindInjection(property)
   return ember_tools#ExistingLogicFile('app/'.injection_type.'s/'.entity_name)
 endfunction
 
+function! s:FindDasherizedComponent(component_name)
+  let component_file = s:FindComponentTemplate(a:component_name)
+  if component_file == ''
+    let component_file = s:FindComponentLogic(a:component_name)
+  endif
+  if component_file == ''
+    echomsg "Can't find component: ".a:component_name
+    return ''
+  endif
+  return component_file
+endfunction
+
 function! s:FindComponentLogic(component_name)
   let existing_file = ember_tools#ExistingLogicFile('app/components/'.a:component_name)
   if existing_file != '' | return existing_file | endif
@@ -413,18 +425,6 @@ function! s:FindLocalActionContainer()
   if existing_file != '' | return existing_file | endif
 
   return ''
-endfunction
-
-function! s:FindDasherizedComponent(component_name)
-  let component_file = s:FindComponentTemplate(a:component_name)
-  if component_file == ''
-    let component_file = s:FindComponentLogic(a:component_name)
-  endif
-  if component_file == ''
-    echomsg "Can't find component: ".a:component_name
-    return ''
-  endif
-  return component_file
 endfunction
 
 function! s:FindRoute(name)
