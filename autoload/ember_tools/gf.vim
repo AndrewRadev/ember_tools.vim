@@ -120,19 +120,6 @@ function! ember_tools#gf#Model()
   return ember_tools#ExistingLogicFile('app/models/'.dasherized_name)
 endfunction
 
-"Should be a 'dasherized' name: `foo-bar/bazz`
-function! ember_tools#gf#FindComponent(component_name)
-  let component_file = s:FindComponentTemplate(a:component_name)
-  if component_file == ''
-    let component_file = s:FindComponentLogic(a:component_name)
-  endif
-  if component_file == ''
-    echomsg "Can't find component: ".a:component_name
-    return ''
-  endif
-  return component_file
-endfunction
-
 function! ember_tools#gf#AngleBracketTemplateComponent()
   if !ember_tools#IsTemplateFiletype()
     return ''
@@ -142,16 +129,22 @@ function! ember_tools#gf#AngleBracketTemplateComponent()
     return ''
   endif
 
-  set iskeyword+=:
-  set iskeyword-=/
-  let angle_bracketed_component_name = expand('<cword>')
-  set iskeyword-=:
-  set iskeyword+=/
+  try
+    let dasherized_component_file = ''
+    let saved_iskeyword = &iskeyword
+    set iskeyword+=:
+    set iskeyword-=/
 
-  let component_parts = split(angle_bracketed_component_name, '::')
-  let component_name = join(map(component_parts, 'ember_tools#util#Dasherize(v:val)'), '/')
-
-  return ember_tools#gf#FindComponent(component_name)
+    let angle_bracketed_component_name = expand('<cword>')
+    let component_parts = split(angle_bracketed_component_name, '::')
+    let dasherized_component_name = join(map(component_parts, 'ember_tools#util#Dasherize(v:val)'), '/')
+    let dasherized_component_file = s:FindDasherizedComponent(dasherized_component_name)
+  catch
+    call ember_tools#util#Debug("[gf] Error while deriving angle-bracketed template " . v:exception)
+  finally
+    let &iskeyword = saved_iskeyword
+    return dasherized_component_file
+  endtry
 endfunction
 
 function! ember_tools#gf#TemplateComponent()
@@ -164,7 +157,7 @@ function! ember_tools#gf#TemplateComponent()
   endif
 
   let component_name = expand('<cword>')
-  return ember_tools#gf#FindComponent(component_name)
+  return s:FindDasherizedComponent(component_name)
 endfunction
 
 function! ember_tools#gf#TemplatePartial()
@@ -420,6 +413,18 @@ function! s:FindLocalActionContainer()
   if existing_file != '' | return existing_file | endif
 
   return ''
+endfunction
+
+function! s:FindDasherizedComponent(component_name)
+  let component_file = s:FindComponentTemplate(a:component_name)
+  if component_file == ''
+    let component_file = s:FindComponentLogic(a:component_name)
+  endif
+  if component_file == ''
+    echomsg "Can't find component: ".a:component_name
+    return ''
+  endif
+  return component_file
 endfunction
 
 function! s:FindRoute(name)
