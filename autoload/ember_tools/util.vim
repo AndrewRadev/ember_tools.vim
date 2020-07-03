@@ -2,7 +2,7 @@
 " FooBarBaz -> foo-bar-baz
 function! ember_tools#util#Dasherize(word)
   let result = ember_tools#util#Lowercase(a:word)
-  return substitute(result, '\([A-Z]\)', '-\l\1', 'g')
+  return substitute(result, '\C\([A-Z]\)', '-\l\1', 'g')
 endfunction
 
 " Lowercase first letter of argument:
@@ -21,7 +21,7 @@ endfunction
 " FooBarBaz -> foo_bar_baz
 function! ember_tools#util#Underscore(word)
   let result = ember_tools#util#Lowercase(a:word)
-  return substitute(result, '\([A-Z]\)', '_\l\1', 'g')
+  return substitute(result, '\C\([A-Z]\)', '_\l\1', 'g')
 endfunction
 
 " Wrap the native filereadable() function to provide some debug logging.
